@@ -176,6 +176,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void openSetting(View view){
+        Toast.makeText(getBaseContext(), "Coming soon", Toast.LENGTH_SHORT).show();
+    }
+
     private String getCurrentTimestamp(){
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         return dateFormatter.format(timestamp);
