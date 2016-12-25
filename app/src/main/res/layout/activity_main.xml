@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -10,12 +11,58 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="de.nfc.reader.activities.MainActivity">
 
+    <ImageView
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        app:srcCompat="@drawable/nfc_icon"
+        android:layout_marginTop="40dp"
+        android:id="@+id/imageView"
+        android:layout_centerHorizontal="true" />
+
     <TextView
-        android:text="TextView"
+        android:text="@string/text_pass_nfc_card"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
+        android:id="@+id/textViewPassNFC"
+        android:textSize="16sp"
+        android:gravity="center_horizontal"
+        android:layout_below="@+id/imageView"
+        android:layout_alignEnd="@+id/imageView"
+        android:layout_alignStart="@+id/imageView" />
+
+    <TextView
+        android:text="Tag-ID: 0123456789"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewPassNFC"
+        android:textSize="14sp"
+        android:gravity="center_horizontal"
+        android:layout_alignStart="@+id/textViewPassNFC"
+        android:layout_marginTop="24dp"
         android:id="@+id/textViewTagId"
+        android:layout_alignEnd="@+id/textViewPassNFC" />
+
+    <TextView
+        android:text="Timestamp: dd.MM.yyyy HH:mm:ss"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textViewTagId"
+        android:layout_alignStart="@+id/textViewTagId"
+        android:textSize="14sp"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:id="@+id/textViewTimestamp"
+        android:layout_alignEnd="@+id/textViewTagId" />
+
+    <TextView
+        android:text="@string/text_data_nfc_filepath"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:gravity="center_horizontal"
+        android:id="@+id/textViewInfo"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true" />
+
 </RelativeLayout>

@@ -6,4 +6,5 @@ package de.nfc.reader.util;
 
 public class Constant {
     public static final String LOGGER = "LOGGER";
+    public static final long   TIME_MILIS_PERIOD_BACKPRESSED = 3000;
 }

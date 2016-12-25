@@ -1,3 +1,6 @@
 <resources>
-    <string name="app_name">NFCTagReaderApp</string>
+    <string name="app_name">NFC-App</string>
+    <string name="text_press_once_again">Press back button once again to close the app.</string>
+    <string name="text_pass_nfc_card">Please pass the NFC card to read your tag ID</string>
+    <string name="text_data_nfc_filepath">All NFC data were stored inside /NFC-App/data.txt</string>
 </resources>
