@@ -26,17 +26,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import de.nfc.reader.R;
 import de.nfc.reader.entities.NFCData;
@@ -46,7 +53,11 @@ public class MainActivity extends AppCompatActivity {
 
     private static final        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
     private static final int    REQUEST_EXTERNAL_STORAGE = 1;
+    private static final int    BEEP_VOLUME_LEVEL = 100;
+    private static final int    BEEP_START_TIME = 200;
     private static String[]     PERMISSIONS_STORAGE = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private static final String ROOT_DIR_NAME = "/NFC-App";
+    private static final String DATA_FILE_NAME = "data.txt";
 
     // List of NFC technologies avalable for this app:
     private final String[][] techList = new String[][] {
@@ -63,11 +74,11 @@ public class MainActivity extends AppCompatActivity {
 
     private Context     cTxt;
     private NfcAdapter  nfcAdapter;
-    private String      dataFileName;
     private TextView    textViewTagId;
     private TextView    textViewTimstamp;
+    private ImageView   imageViewWarning;
+    private TextView    textViewWarning;
     private long        back_pressed_time;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,11 +88,30 @@ public class MainActivity extends AppCompatActivity {
         // Set the current context on this activity.
         cTxt = this;
 
+        // Prepare the root directory and the data.txt file.
+        File root = android.os.Environment.getExternalStorageDirectory();
+        File dir = new File (root.getAbsolutePath() + ROOT_DIR_NAME);
+        if(!dir.exists()){
+            dir.mkdirs();
+        }
+        File file = new File(dir, DATA_FILE_NAME);
+        if (!file.exists()){
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         // Initialize all UI elements.
         this.textViewTagId = (TextView)findViewById(R.id.textViewTagId);
         this.textViewTagId.setVisibility(View.GONE);
         this.textViewTimstamp = (TextView)findViewById(R.id.textViewTimestamp);
         this.textViewTimstamp.setVisibility(View.GONE);
+        this.imageViewWarning = (ImageView)findViewById(R.id.imageViewWarning);
+        this.imageViewWarning.setVisibility(View.GONE);
+        this.textViewWarning = (TextView)findViewById(R.id.textViewReport);
+        this.textViewWarning.setVisibility(View.GONE);
 
         // Initialize the NFC adapter for reading the tag UID.
         this.nfcAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -156,8 +186,8 @@ public class MainActivity extends AppCompatActivity {
         if (intent.getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
 
             // Set beep sound if new tag discovered.
-            ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
-            toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200);
+            ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, BEEP_VOLUME_LEVEL);
+            toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, BEEP_START_TIME);
 
             // Retrieve the tag UID from intent.
             String tagID = ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
@@ -218,14 +248,51 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private boolean isUserAlreadyTappedTwice(File file, String userId){
+        boolean retVal = false;
+        List<NFCData> storageData = new ArrayList<NFCData>();
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.trim().split(",");
+                String tagId = parts[0];
+                String timestamp = parts[1];
+                NFCData newData = new NFCData(tagId, timestamp);
+                storageData.add(newData);
+            }
+            br.close();
+        }
+        catch (IOException e) {
+            Log.e(Constant.LOGGER, e.getLocalizedMessage().toString());
+        }
+
+        int tappedSum = 1;
+        for (NFCData data : storageData) {
+            if(data.getTagId().equals(userId)){
+                tappedSum++;
+            }
+        }
+
+        Log.d(Constant.LOGGER, ">>> Tapped sum for " + userId + " -> #" + tappedSum);
+
+        if(tappedSum > 2){
+            return true;
+        }
+
+        return retVal;
+    }
+
     private boolean storeNFCData(NFCData data){
         File root = android.os.Environment.getExternalStorageDirectory();
-        File dir = new File (root.getAbsolutePath() + "/NFC-App");
+
+        File dir = new File (root.getAbsolutePath() + ROOT_DIR_NAME);
         if(!dir.exists()){
             dir.mkdirs();
         }
 
-        File file = new File(dir, "data.txt");
+        File file = new File(dir, DATA_FILE_NAME);
         if (!file.exists()){
             try {
                 file.createNewFile();
@@ -234,19 +301,37 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        FileOutputStream fos = null;
-        OutputStreamWriter outStreamWriter = null;
-        try {
-            fos = new FileOutputStream(file, true);
-            outStreamWriter = new OutputStreamWriter(fos);
-            outStreamWriter.append("Tag-ID: " + data.getTagId() + ", " + "Timestamp: " + data.getTimestamp()).append("\n");
-            outStreamWriter.flush();
-            fos.close();
-            Log.d(Constant.LOGGER, ">>> Write data for tag-ID: " + data.getTagId());
-            return true;
-        } catch (Throwable throwable) {
-            Log.e(Constant.LOGGER, throwable.getLocalizedMessage().toString());
+        if(!file.exists()){
+            Toast.makeText(getBaseContext(), "Data.txt was not found!", Toast.LENGTH_SHORT).show();
+            return false;
+        }else{
+            if(isUserAlreadyTappedTwice(file, data.getTagId())){
+
+                this.imageViewWarning.setVisibility(View.VISIBLE);
+                this.textViewWarning.setVisibility(View.VISIBLE);
+
+                return false;
+            }else{
+
+                this.imageViewWarning.setVisibility(View.GONE);
+                this.textViewWarning.setVisibility(View.GONE);
+
+                FileOutputStream fos = null;
+                OutputStreamWriter outStreamWriter = null;
+                try {
+                    fos = new FileOutputStream(file, true);
+                    outStreamWriter = new OutputStreamWriter(fos);
+                    outStreamWriter.append(data.getTagId() + "," + data.getTimestamp()).append("\n");
+                    outStreamWriter.flush();
+                    fos.close();
+                    Log.d(Constant.LOGGER, ">>> Write data for tag-ID: " + data.getTagId());
+                    return true;
+                } catch (Throwable throwable) {
+                    Log.e(Constant.LOGGER, throwable.getLocalizedMessage().toString());
+                }
+            }
         }
+
         return false;
     }
 

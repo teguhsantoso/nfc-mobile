@@ -75,4 +75,25 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true" />
 
+    <TextView
+        android:text="@string/text_data_warning_disqualification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textViewReport"
+        android:gravity="center_vertical"
+        android:layout_alignTop="@+id/imageViewWarning"
+        android:layout_alignBottom="@+id/imageViewWarning"
+        android:layout_alignEnd="@+id/textViewTimestamp"
+        android:layout_toEndOf="@+id/imageViewWarning" />
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:srcCompat="@drawable/warning_icon"
+        android:scaleType="fitCenter"
+        android:layout_marginTop="32dp"
+        android:id="@+id/imageViewWarning"
+        android:layout_below="@+id/textViewTimestamp"
+        android:layout_alignStart="@+id/textViewTimestamp" />
+
 </RelativeLayout>
