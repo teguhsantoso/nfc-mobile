@@ -78,7 +78,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView    textViewTagId;
     private TextView    textViewTimetamp;
     private ImageView   imageViewWarning;
-    private TextView    textViewWarning;
+    private ImageView   imageViewSuccess;
+    private TextView    textViewInfo;
     private long        back_pressed_time;
 
     @Override
@@ -113,8 +114,10 @@ public class MainActivity extends AppCompatActivity {
         this.textViewTimetamp.setVisibility(View.GONE);
         this.imageViewWarning = (ImageView)findViewById(R.id.imageViewWarning);
         this.imageViewWarning.setVisibility(View.GONE);
-        this.textViewWarning = (TextView)findViewById(R.id.textViewReport);
-        this.textViewWarning.setVisibility(View.GONE);
+        this.imageViewSuccess = (ImageView)findViewById(R.id.imageViewSuccess);
+        this.imageViewSuccess.setVisibility(View.GONE);
+        this.textViewInfo = (TextView)findViewById(R.id.textViewReport);
+        this.textViewInfo.setVisibility(View.GONE);
 
         // Initialize the NFC adapter for reading the tag UID.
         this.nfcAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -192,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
             ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, BEEP_VOLUME_LEVEL);
             toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, BEEP_START_TIME);
 
-            // Retrieve the tag UID from intent.
+            // Retrieve the tag UID from intent, it contains 7 bytes.
             String tagID = ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
             String strTimestamp = getCurrentTimestamp();
 
@@ -251,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private boolean isUserAlreadyTappedTwice(File file, String userId){
+    private boolean isUserAlreadyTappedTwiceInSameDay(File file, String userId){
         boolean retVal = false;
         List<NFCData> storageData = new ArrayList<NFCData>();
 
@@ -273,6 +276,10 @@ public class MainActivity extends AppCompatActivity {
 
         int tappedSum = 1;
         for (NFCData data : storageData) {
+
+            // TODO
+            // Check if the timestamp date is the same with today and same tag Id.
+
             if(data.getTagId().equals(userId)){
                 tappedSum++;
             }
@@ -308,31 +315,32 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(getBaseContext(), "Data.txt was not found!", Toast.LENGTH_SHORT).show();
             return false;
         }else{
-            if(isUserAlreadyTappedTwice(file, data.getTagId())){
-
+            if(isUserAlreadyTappedTwiceInSameDay(file, data.getTagId())){
                 this.imageViewWarning.setVisibility(View.VISIBLE);
-                this.textViewWarning.setVisibility(View.VISIBLE);
-
-                return false;
+                this.imageViewSuccess.setVisibility(View.GONE);
+                this.textViewInfo.setVisibility(View.VISIBLE);
+                this.textViewInfo.setText("You already tapped twice today!");
             }else{
-
-                this.imageViewWarning.setVisibility(View.GONE);
-                this.textViewWarning.setVisibility(View.GONE);
-
-                FileOutputStream fos = null;
-                OutputStreamWriter outStreamWriter = null;
-                try {
-                    fos = new FileOutputStream(file, true);
-                    outStreamWriter = new OutputStreamWriter(fos);
-                    outStreamWriter.append(data.getTagId() + "," + data.getTimestamp()).append("\n");
-                    outStreamWriter.flush();
-                    fos.close();
-                    Log.d(Constant.LOGGER, ">>> Write data for tag-ID: " + data.getTagId());
-                    return true;
-                } catch (Throwable throwable) {
-                    Log.e(Constant.LOGGER, throwable.getLocalizedMessage().toString());
-                }
+                this.imageViewWarning.setVisibility(View.VISIBLE);
+                this.imageViewSuccess.setVisibility(View.VISIBLE);
+                this.textViewInfo.setVisibility(View.VISIBLE);
+                this.textViewInfo.setText("Your presence was recorded successfully!");
             }
+
+            FileOutputStream fos = null;
+            OutputStreamWriter outStreamWriter = null;
+            try {
+                fos = new FileOutputStream(file, true);
+                outStreamWriter = new OutputStreamWriter(fos);
+                outStreamWriter.append(data.getTagId() + "," + data.getTimestamp()).append("\n");
+                outStreamWriter.flush();
+                fos.close();
+                Log.d(Constant.LOGGER, ">>> Data for tag-ID " + data.getTagId() + " was stored successfully.");
+                return true;
+            } catch (Throwable throwable) {
+                Log.e(Constant.LOGGER, throwable.getLocalizedMessage().toString());
+            }
+
         }
 
         return false;
