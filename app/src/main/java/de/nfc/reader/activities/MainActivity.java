@@ -52,6 +52,7 @@ import de.nfc.reader.util.Constant;
 public class MainActivity extends AppCompatActivity {
 
     private static final        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+    private static final        SimpleDateFormat dayFormatter = new SimpleDateFormat("dd.MM.yyyy");
     private static final int    REQUEST_EXTERNAL_STORAGE = 1;
     private static final int    BEEP_VOLUME_LEVEL = 100;
     private static final int    BEEP_START_TIME = 200;
@@ -221,6 +222,11 @@ public class MainActivity extends AppCompatActivity {
         return dateFormatter.format(timestamp);
     }
 
+    private String getCurrentDate(){
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        return dayFormatter.format(timestamp);
+    }
+
     private void closeApp(){
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
@@ -276,21 +282,20 @@ public class MainActivity extends AppCompatActivity {
 
         int tappedSum = 1;
         for (NFCData data : storageData) {
-
-            // TODO
-            // Check if the timestamp date is the same with today and same tag Id.
-
-            if(data.getTagId().equals(userId)){
+            String strDateData = data.getTimestamp();
+            String[] parts = strDateData.trim().split(" ");
+            String tapDate = parts[0].trim();
+            Log.d(Constant.LOGGER, ">>> Current date: " + getCurrentDate());
+            Log.d(Constant.LOGGER, ">>> Date data: " + tapDate);
+            if(tapDate.equals(getCurrentDate()) && data.getTagId().equals(userId)){
                 tappedSum++;
             }
         }
 
         Log.d(Constant.LOGGER, ">>> Tapped sum for " + userId + " -> #" + tappedSum);
-
         if(tappedSum > 2){
             return true;
         }
-
         return retVal;
     }
 
@@ -317,11 +322,11 @@ public class MainActivity extends AppCompatActivity {
         }else{
             if(isUserAlreadyTappedTwiceInSameDay(file, data.getTagId())){
                 this.imageViewWarning.setVisibility(View.VISIBLE);
-                this.imageViewSuccess.setVisibility(View.GONE);
+                this.imageViewSuccess.setVisibility(View.INVISIBLE);
                 this.textViewInfo.setVisibility(View.VISIBLE);
                 this.textViewInfo.setText("You already tapped twice today!");
             }else{
-                this.imageViewWarning.setVisibility(View.VISIBLE);
+                this.imageViewWarning.setVisibility(View.INVISIBLE);
                 this.imageViewSuccess.setVisibility(View.VISIBLE);
                 this.textViewInfo.setVisibility(View.VISIBLE);
                 this.textViewInfo.setText("Your presence was recorded successfully!");
