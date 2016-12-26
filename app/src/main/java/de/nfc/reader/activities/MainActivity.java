@@ -74,8 +74,9 @@ public class MainActivity extends AppCompatActivity {
 
     private Context     cTxt;
     private NfcAdapter  nfcAdapter;
+    private TextView    textViewAppVersionNumber;
     private TextView    textViewTagId;
-    private TextView    textViewTimstamp;
+    private TextView    textViewTimetamp;
     private ImageView   imageViewWarning;
     private TextView    textViewWarning;
     private long        back_pressed_time;
@@ -104,10 +105,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // Initialize all UI elements.
+        this.textViewAppVersionNumber = (TextView)findViewById(R.id.textViewVersionNumber);
+        this.textViewAppVersionNumber.setText("v" + getAppVersionNumber(cTxt));
         this.textViewTagId = (TextView)findViewById(R.id.textViewTagId);
         this.textViewTagId.setVisibility(View.GONE);
-        this.textViewTimstamp = (TextView)findViewById(R.id.textViewTimestamp);
-        this.textViewTimstamp.setVisibility(View.GONE);
+        this.textViewTimetamp = (TextView)findViewById(R.id.textViewTimestamp);
+        this.textViewTimetamp.setVisibility(View.GONE);
         this.imageViewWarning = (ImageView)findViewById(R.id.imageViewWarning);
         this.imageViewWarning.setVisibility(View.GONE);
         this.textViewWarning = (TextView)findViewById(R.id.textViewReport);
@@ -194,13 +197,13 @@ public class MainActivity extends AppCompatActivity {
             String strTimestamp = getCurrentTimestamp();
 
             this.textViewTagId.setVisibility(View.VISIBLE);
-            this.textViewTimstamp.setVisibility(View.VISIBLE);
+            this.textViewTimetamp.setVisibility(View.VISIBLE);
 
             if(tagID == null){
                 this.textViewTagId.setText("Error, no NFC Tag-ID found.");
             }else{
                 this.textViewTagId.setText("Tag-ID: " + tagID);
-                this.textViewTimstamp.setText("Timestamp: " + strTimestamp);
+                this.textViewTimetamp.setText("Timestamp: " + strTimestamp);
                 storeNFCData(new NFCData(tagID, strTimestamp));
             }
         }
@@ -333,6 +336,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return false;
+    }
+
+    private String getAppVersionNumber(Context cTxt){
+        String retVal = null;
+        try{
+            retVal = cTxt.getPackageManager().getPackageInfo(cTxt.getPackageName(), 0).versionName;
+        }catch(Throwable throwable){
+            Log.e(Constant.LOGGER, throwable.getLocalizedMessage().toString());
+        }
+        return retVal;
     }
 
 }
