@@ -3,9 +3,12 @@ package de.nfc.reader.entities;
 import java.io.Serializable;
 
 /**
- * Created by teguh.santoso on 25.12.2016.
+ *
+ *  Entity class for NFC data used in this app.
+ *  @author Teguh Santoso
+ *  @since  version 1.0 2016
+ *
  */
-
 public class NFCData implements Serializable {
     private static final long serialVersionUID = -3496408271787886660L;
     private String tagId;
