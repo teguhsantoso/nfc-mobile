@@ -199,7 +199,14 @@ public class MainActivity extends AppCompatActivity {
             }else{
                 this.textViewTagId.setText(getResources().getString(R.string.text_tag_id) + ":" + tagID);
                 this.textViewTimetamp.setText(getResources().getString(R.string.text_timestamp) + ":" + strTimestamp);
+
+                // Store NFC data in text file inside external storage device.
                 storeNFCData(new NFCData(tagID, strTimestamp));
+
+                // TODO
+                // Call webservice and validate the TAG-ID of user.
+                //validateNfcTagId();
+
             }
         }
     }
