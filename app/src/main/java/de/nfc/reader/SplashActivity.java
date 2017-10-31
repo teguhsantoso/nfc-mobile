@@ -11,6 +11,13 @@ import android.widget.ImageView;
 
 import de.nfc.reader.activities.MainActivity;
 
+/**
+ *
+ *  Main class activity of this app showing the splash screen.
+ *  @author Teguh Santoso
+ *  @since  version 1.0 2016
+ *
+ */
 public class SplashActivity extends AppCompatActivity {
     private Context     cTxt;
     private Boolean     showAnimation = false;
@@ -32,6 +39,7 @@ public class SplashActivity extends AppCompatActivity {
 
         // Set default action and values for UI components.
         showAnimation = true;
+
     }
 
     @Override
@@ -42,7 +50,7 @@ public class SplashActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // Do nothing.
+        // Nothing to do for now.
     }
 
     private void startSplashAnimation() {
@@ -55,12 +63,12 @@ public class SplashActivity extends AppCompatActivity {
 
                             @Override
                             public void onAnimationStart(Animation animation) {
-                                // Not yet implemented.
+                                // Nothing to do for now.
                             }
 
                             @Override
                             public void onAnimationRepeat(Animation animation) {
-                                // Not yet implemented.
+                                // Nothing to do for now.
                             }
 
                             @Override
