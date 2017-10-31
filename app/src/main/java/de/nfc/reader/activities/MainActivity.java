@@ -34,26 +34,40 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import de.nfc.reader.R;
 import de.nfc.reader.entities.NFCData;
+import de.nfc.reader.util.AppUtility;
 import de.nfc.reader.util.Constant;
 
+import static de.nfc.reader.util.Constant.BEEP_START_TIME;
+import static de.nfc.reader.util.Constant.BEEP_VOLUME_LEVEL;
+import static de.nfc.reader.util.Constant.DATA_FILE_NAME;
+import static de.nfc.reader.util.Constant.PERMISSIONS_STORAGE;
+import static de.nfc.reader.util.Constant.REQUEST_EXTERNAL_STORAGE;
+import static de.nfc.reader.util.Constant.ROOT_DIR_NAME;
 
+/**
+ *
+ *  Main activity for reading the NFC card and showing the student data.
+ *  @author Teguh Santoso
+ *  @since  version 1.0 2016
+ *
+ */
 public class MainActivity extends AppCompatActivity {
-    private static final        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-    private static final        SimpleDateFormat dayFormatter = new SimpleDateFormat("dd.MM.yyyy");
-    private static final int    REQUEST_EXTERNAL_STORAGE = 1;
-    private static final int    BEEP_VOLUME_LEVEL = 100;
-    private static final int    BEEP_START_TIME = 200;
-    private static String[]     PERMISSIONS_STORAGE = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-    private static final String ROOT_DIR_NAME = "/NFC-App";
-    private static final String DATA_FILE_NAME = "data.txt";
+    private Context             cTxt;
+    private NfcAdapter          nfcAdapter;
+    private TextView            textViewAppVersionNumber;
+    private TextView            textViewTagId;
+    private TextView            textViewTimetamp;
+    private ImageView           imageViewWarning;
+    private ImageView           imageViewSuccess;
+    private TextView            textViewInfo;
+    private long                back_pressed_time;
 
-    // List of NFC technologies avalable for this app:
+    // List of NFC technologies available for this app:
     private final String[][] techList = new String[][] {
             new String[] {
                     NfcA.class.getName(),
@@ -65,16 +79,6 @@ public class MainActivity extends AppCompatActivity {
                     MifareUltralight.class.getName(), Ndef.class.getName()
             }
     };
-
-    private Context     cTxt;
-    private NfcAdapter  nfcAdapter;
-    private TextView    textViewAppVersionNumber;
-    private TextView    textViewTagId;
-    private TextView    textViewTimetamp;
-    private ImageView   imageViewWarning;
-    private ImageView   imageViewSuccess;
-    private TextView    textViewInfo;
-    private long        back_pressed_time;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize all UI elements.
         this.textViewAppVersionNumber = (TextView)findViewById(R.id.textViewVersionNumber);
-        this.textViewAppVersionNumber.setText("v" + getAppVersionNumber(cTxt));
+        this.textViewAppVersionNumber.setText("v" + AppUtility.getInstance().getAppVersionNumber(cTxt));
         this.textViewTagId = (TextView)findViewById(R.id.textViewTagId);
         this.textViewTagId.setVisibility(View.GONE);
         this.textViewTimetamp = (TextView)findViewById(R.id.textViewTimestamp);
@@ -190,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
             toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, BEEP_START_TIME);
 
             // Retrieve the tag UID from intent, it contains 7 bytes.
-            String tagID = ByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
+            String tagID = AppUtility.getInstance().convertByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
             String strTimestamp = getCurrentTimestamp();
 
             this.textViewTagId.setVisibility(View.VISIBLE);
@@ -212,12 +216,12 @@ public class MainActivity extends AppCompatActivity {
 
     private String getCurrentTimestamp(){
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        return dateFormatter.format(timestamp);
+        return Constant.dateFormatter.format(timestamp);
     }
 
     private String getCurrentDate(){
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        return dayFormatter.format(timestamp);
+        return Constant.dayFormatter.format(timestamp);
     }
 
     private void closeApp(){
@@ -226,21 +230,6 @@ public class MainActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();
-    }
-
-    private String ByteArrayToHexString(byte[] inByteArray) {
-        int i, j, in;
-        String [] hex = {"0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"};
-        String out= "";
-        for(j = 0 ; j < inByteArray.length ; ++j)
-        {
-            in = (int) inByteArray[j] & 0xff;
-            i = (in >> 4) & 0x0f;
-            out += hex[i];
-            i = in & 0x0f;
-            out += hex[i];
-        }
-        return out;
     }
 
     private void verifyStoragePermissions(Activity activity) {
@@ -278,17 +267,15 @@ public class MainActivity extends AppCompatActivity {
             String strDateData = data.getTimestamp();
             String[] parts = strDateData.trim().split(" ");
             String tapDate = parts[0].trim();
-            Log.d(Constant.LOGGER, ">>> Current date: " + getCurrentDate());
-            Log.d(Constant.LOGGER, ">>> Date data: " + tapDate);
             if(tapDate.equals(getCurrentDate()) && data.getTagId().equals(userId)){
                 tappedSum++;
             }
         }
 
-        Log.d(Constant.LOGGER, ">>> Tapped sum for " + userId + " -> #" + tappedSum);
         if(tappedSum > 2){
             return true;
         }
+
         return retVal;
     }
 
@@ -332,8 +319,8 @@ public class MainActivity extends AppCompatActivity {
                 outStreamWriter = new OutputStreamWriter(fos);
                 outStreamWriter.append(data.getTagId() + "," + data.getTimestamp()).append("\n");
                 outStreamWriter.flush();
-                fos.close();
                 Log.d(Constant.LOGGER, ">>> Data for tag-ID " + data.getTagId() + " was stored successfully.");
+                fos.close();
                 return true;
             } catch (Throwable throwable) {
                 Log.e(Constant.LOGGER, throwable.getLocalizedMessage().toString());
@@ -342,16 +329,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return false;
-    }
-
-    private String getAppVersionNumber(Context cTxt){
-        String retVal = null;
-        try{
-            retVal = cTxt.getPackageManager().getPackageInfo(cTxt.getPackageName(), 0).versionName;
-        }catch(Throwable throwable){
-            Log.e(Constant.LOGGER, throwable.getLocalizedMessage().toString());
-        }
-        return retVal;
     }
 
 }
