@@ -4,4 +4,12 @@
     <string name="text_pass_nfc_card">Please pass the NFC card to read your tag ID</string>
     <string name="text_data_nfc_filepath">All NFC data were stored inside /NFC-App/data.txt</string>
     <string name="text_data_warning_disqualification">You already tapped twice, please report to your lecture!</string>
+    <string name="text_nfc_is_not_supported">NFC is not supported on this devices.</string>
+    <string name="text_nfc_is_not_enabled">NFC is not enabled.</string>
+    <string name="text_no_tag_id_found">Error, no NFC Tag-ID found.</string>
+    <string name="text_tag_id">Tag-ID</string>
+    <string name="text_timestamp">Timestamp</string>
+    <string name="text_data_file_not_found">File data.txt was not found.</string>
+    <string name="text_user_tapped_twice_today">You already tapped twice today.</string>
+    <string name="text_user_presence_recorded">Your presence was recorded successfully.</string>
 </resources>

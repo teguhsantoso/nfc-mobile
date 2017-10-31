@@ -19,6 +19,8 @@ public class Constant {
     public static final int                 REQUEST_EXTERNAL_STORAGE = 1;
     public static final int                 BEEP_VOLUME_LEVEL = 100;
     public static final int                 BEEP_START_TIME = 200;
+    public static final int                 INT_INITIAL_NFC_TAP = 1;
+    public static final int                 INT_MAX_NFC_TAP = 2;
     public static String[]                  PERMISSIONS_STORAGE = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
     public static final String              ROOT_DIR_NAME = "/NFC-App";
     public static final String              DATA_FILE_NAME = "data.txt";

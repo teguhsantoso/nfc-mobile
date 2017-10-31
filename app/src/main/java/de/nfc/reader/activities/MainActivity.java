@@ -58,14 +58,14 @@ import static de.nfc.reader.util.Constant.ROOT_DIR_NAME;
  */
 public class MainActivity extends AppCompatActivity {
     private Context             cTxt;
-    private NfcAdapter          nfcAdapter;
+    private TextView            textViewInfo;
     private TextView            textViewAppVersionNumber;
     private TextView            textViewTagId;
     private TextView            textViewTimetamp;
     private ImageView           imageViewWarning;
     private ImageView           imageViewSuccess;
-    private TextView            textViewInfo;
     private long                back_pressed_time;
+    private NfcAdapter          nfcAdapter;
 
     // List of NFC technologies available for this app:
     private final String[][] techList = new String[][] {
@@ -120,33 +120,27 @@ public class MainActivity extends AppCompatActivity {
         // Initialize the NFC adapter for reading the tag UID.
         this.nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if(this.nfcAdapter == null){
-            Toast.makeText(this,
-                    "NFC NOT supported on this devices!",
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getResources().getString(R.string.text_nfc_is_not_supported), Toast.LENGTH_LONG).show();
         }else if(!this.nfcAdapter.isEnabled()){
-            Toast.makeText(this,
-                    "NFC NOT Enabled!",
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getResources().getString(R.string.text_nfc_is_not_enabled), Toast.LENGTH_LONG).show();
         }
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        // Verifiy the write external storage permission.
+        // Verify the write external storage permission.
         verifyStoragePermissions(this);
 
         // Initialize the NFC adapter for reading the tag UID.
         this.nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        this.nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         if(this.nfcAdapter == null){
-            Toast.makeText(this,
-                    "NFC NOT supported on this devices!",
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getResources().getString(R.string.text_nfc_is_not_supported), Toast.LENGTH_LONG).show();
         }else if(!this.nfcAdapter.isEnabled()){
-            Toast.makeText(this,
-                    "NFC NOT Enabled!",
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getResources().getString(R.string.text_nfc_is_not_enabled), Toast.LENGTH_LONG).show();
         }
 
         if(this.nfcAdapter != null && this.nfcAdapter.isEnabled()){
@@ -177,12 +171,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (back_pressed_time + Constant.TIME_MILIS_PERIOD_BACKPRESSED > System.currentTimeMillis()) {
+        if (this.back_pressed_time + Constant.TIME_MILIS_PERIOD_BACKPRESSED > System.currentTimeMillis()) {
             closeApp();
         } else {
             Toast.makeText(getBaseContext(), getResources().getString(R.string.text_press_once_again), Toast.LENGTH_SHORT).show();
         }
-        back_pressed_time = System.currentTimeMillis();
+        this.back_pressed_time = System.currentTimeMillis();
     }
 
     @Override
@@ -197,14 +191,14 @@ public class MainActivity extends AppCompatActivity {
             String tagID = AppUtility.getInstance().convertByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
             String strTimestamp = getCurrentTimestamp();
 
+            // Refresh the UI elements contents and states.
             this.textViewTagId.setVisibility(View.VISIBLE);
             this.textViewTimetamp.setVisibility(View.VISIBLE);
-
             if(tagID == null){
-                this.textViewTagId.setText("Error, no NFC Tag-ID found.");
+                this.textViewTagId.setText(getResources().getString(R.string.text_no_tag_id_found));
             }else{
-                this.textViewTagId.setText("Tag-ID: " + tagID);
-                this.textViewTimetamp.setText("Timestamp: " + strTimestamp);
+                this.textViewTagId.setText(getResources().getString(R.string.text_tag_id) + ":" + tagID);
+                this.textViewTimetamp.setText(getResources().getString(R.string.text_timestamp) + ":" + strTimestamp);
                 storeNFCData(new NFCData(tagID, strTimestamp));
             }
         }
@@ -262,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
             Log.e(Constant.LOGGER, e.getLocalizedMessage().toString());
         }
 
-        int tappedSum = 1;
+        int tappedSum = Constant.INT_INITIAL_NFC_TAP;
         for (NFCData data : storageData) {
             String strDateData = data.getTimestamp();
             String[] parts = strDateData.trim().split(" ");
@@ -272,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        if(tappedSum > 2){
+        if(tappedSum > Constant.INT_MAX_NFC_TAP){
             return true;
         }
 
@@ -297,19 +291,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if(!file.exists()){
-            Toast.makeText(getBaseContext(), "Data.txt was not found!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), getResources().getString(R.string.text_data_file_not_found), Toast.LENGTH_SHORT).show();
             return false;
         }else{
             if(isUserAlreadyTappedTwiceInSameDay(file, data.getTagId())){
                 this.imageViewWarning.setVisibility(View.VISIBLE);
                 this.imageViewSuccess.setVisibility(View.INVISIBLE);
                 this.textViewInfo.setVisibility(View.VISIBLE);
-                this.textViewInfo.setText("You already tapped twice today!");
+                this.textViewInfo.setText(getResources().getString(R.string.text_user_tapped_twice_today));
             }else{
                 this.imageViewWarning.setVisibility(View.INVISIBLE);
                 this.imageViewSuccess.setVisibility(View.VISIBLE);
                 this.textViewInfo.setVisibility(View.VISIBLE);
-                this.textViewInfo.setText("Your presence was recorded successfully!");
+                this.textViewInfo.setText(getResources().getString(R.string.text_user_presence_recorded));
             }
 
             FileOutputStream fos = null;
