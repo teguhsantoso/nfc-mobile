@@ -27,6 +27,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -41,6 +48,8 @@ import de.nfc.reader.R;
 import de.nfc.reader.entities.NFCData;
 import de.nfc.reader.util.AppUtility;
 import de.nfc.reader.util.Constant;
+import de.nfc.reader.util.CustomJsonRequest;
+import de.nfc.reader.util.CustomVolleyRequestQueue;
 
 import static de.nfc.reader.util.Constant.BEEP_START_TIME;
 import static de.nfc.reader.util.Constant.BEEP_VOLUME_LEVEL;
@@ -56,7 +65,8 @@ import static de.nfc.reader.util.Constant.ROOT_DIR_NAME;
  *  @since  version 1.0 2016
  *
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Response.Listener, Response.ErrorListener {
+    public static final String  REQUEST_TAG = "MainVolleyActivity";
     private Context             cTxt;
     private TextView            textViewInfo;
     private TextView            textViewAppVersionNumber;
@@ -66,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView           imageViewSuccess;
     private long                back_pressed_time;
     private NfcAdapter          nfcAdapter;
+    private RequestQueue        mQueue;
 
     // List of NFC technologies available for this app:
     private final String[][] techList = new String[][] {
@@ -115,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
         this.imageViewSuccess = (ImageView)findViewById(R.id.imageViewSuccess);
         this.imageViewSuccess.setVisibility(View.GONE);
         this.textViewInfo = (TextView)findViewById(R.id.textViewReport);
-        this.textViewInfo.setVisibility(View.GONE);
 
         // Initialize the NFC adapter for reading the tag UID.
         this.nfcAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -124,6 +134,15 @@ public class MainActivity extends AppCompatActivity {
         }else if(!this.nfcAdapter.isEnabled()){
             Toast.makeText(this, getResources().getString(R.string.text_nfc_is_not_enabled), Toast.LENGTH_LONG).show();
         }
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        // Instantiate our volley request queue.
+        this.mQueue = CustomVolleyRequestQueue.getInstance(this.getApplicationContext()).getRequestQueue();
 
     }
 
@@ -170,6 +189,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        if (mQueue != null) {
+            mQueue.cancelAll(REQUEST_TAG);
+        }
+    }
+
+    @Override
     public void onBackPressed() {
         if (this.back_pressed_time + Constant.TIME_MILIS_PERIOD_BACKPRESSED > System.currentTimeMillis()) {
             closeApp();
@@ -201,11 +228,21 @@ public class MainActivity extends AppCompatActivity {
                 this.textViewTimetamp.setText(getResources().getString(R.string.text_timestamp) + ":" + strTimestamp);
 
                 // Store NFC data in text file inside external storage device.
-                storeNFCData(new NFCData(tagID, strTimestamp));
+                //storeNFCData(new NFCData(tagID, strTimestamp));
 
-                // TODO
-                // Call webservice and validate the TAG-ID of user.
-                //validateNfcTagId();
+                // Check if internet connection is available.
+                if(!AppUtility.getInstance().isInternetConnectionAvailable(5000)){
+                    Log.d(Constant.LOGGER, ">>>>>>> No internet connection.");
+                    // TODO
+                    // Show warning message if no internet connection.
+                    return;
+                };
+
+                // Send request to volley queue based on webservice address.
+                String urlWS = Constant.WEBSERVICE_URL_ADDRESS + tagID;
+                final CustomJsonRequest jsonRequest = new CustomJsonRequest(Request.Method.GET, urlWS, new JSONObject(), this, this);
+                jsonRequest.setTag(REQUEST_TAG);
+                mQueue.add(jsonRequest);
 
             }
         }
@@ -332,4 +369,17 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+    @Override
+    public void onErrorResponse(VolleyError error) {
+        Log.d(Constant.LOGGER, ">>> Response error server: " + error.getLocalizedMessage());
+    }
+
+    @Override
+    public void onResponse(Object response) {
+        if(response == null){
+            Log.d(Constant.LOGGER, ">>> Response server is NULL");
+            return;
+        }
+        Log.d(Constant.LOGGER, ">>> Response server: " + response);
+    }
 }

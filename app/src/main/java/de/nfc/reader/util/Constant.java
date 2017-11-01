@@ -24,4 +24,5 @@ public class Constant {
     public static String[]                  PERMISSIONS_STORAGE = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
     public static final String              ROOT_DIR_NAME = "/NFC-App";
     public static final String              DATA_FILE_NAME = "data.txt";
+    public static final String              WEBSERVICE_URL_ADDRESS = "http://api.jeni-us.xyz/api/absen/cek-status/";
 }
