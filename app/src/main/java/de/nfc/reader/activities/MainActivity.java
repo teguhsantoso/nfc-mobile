@@ -32,6 +32,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -376,10 +377,14 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
 
     @Override
     public void onResponse(Object response) {
-        if(response == null){
-            Log.d(Constant.LOGGER, ">>> Response server is NULL");
-            return;
+        try {
+            JSONObject mData = (JSONObject) response;
+            Log.d(Constant.LOGGER, ">>> User name: " + mData.getString("nama"));
+            Log.d(Constant.LOGGER, ">>> Tag-ID: " + mData.getString("tag_id"));
+            Log.d(Constant.LOGGER, ">>> Status: " + mData.getString("status"));
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-        Log.d(Constant.LOGGER, ">>> Response server: " + response);
+
     }
 }
