@@ -19,7 +19,6 @@ import android.nfc.tech.NfcB;
 import android.nfc.tech.NfcF;
 import android.nfc.tech.NfcV;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -381,6 +380,9 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
     public void onResponse(Object response) {
         try {
 
+            // Show progress bar for sending data to server.
+            progressBarSendData.setVisibility(View.VISIBLE);
+
             // Validation for the volley operation mode, 0 = GET, 1 = POST.
             if(volleyOperationMode == Constant.VOLLEY_GET_OPERATION){
                 final JSONObject mData = (JSONObject) response;
@@ -394,19 +396,8 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                         this.textViewTimetamp.setVisibility(View.VISIBLE);
                         final String strTimestamp = getCurrentTimestamp();
                         this.textViewTimetamp.setText(getResources().getString(R.string.text_timestamp) + ":" + strTimestamp);
-                        this.textViewInfo.setText(mData.getString(Constant.JSON_PARAM_NAME) + "," + getResources().getString(R.string.text_data_sent_to_system));
-                        new CountDownTimer(Constant.PARAM_TIMER_DURATION_MILLIS, Constant.PARAM_TIMER_INTERVAL_MILLIS) {
-                            public void onTick(long millisUntilFinished) {
-                                progressBarSendData.setVisibility(View.VISIBLE);
-                            }
-                            public void onFinish() {
-                                try {
-                                    sendDataAbsenceToServer(mData.getString(Constant.JSON_PARAM_TAG_ID), strTimestamp);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }.start();
+                        this.textViewInfo.setText(getResources().getString(R.string.text_data_sent_to_system));
+                        sendDataAbsenceToServer(mData.getString(Constant.JSON_PARAM_TAG_ID), strTimestamp);
                         break;
                     default:
                         this.imageViewWarning.setVisibility(View.VISIBLE);
@@ -414,13 +405,15 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                         this.textViewInfo.setText(getResources().getString(R.string.text_unknown_card));
                 }
             }else if(volleyOperationMode == Constant.VOLLEY_POST_OPERATION){
-                progressBarSendData.setVisibility(View.INVISIBLE);
                 JSONObject mData = (JSONObject) response;
                 String mString = mData.getString(Constant.JSON_PARAM_MESSAGE);
                 if(!mString.trim().equals(Constant.PARAM_OK)){
+                    progressBarSendData.setVisibility(View.INVISIBLE);
                     this.imageViewWarning.setVisibility(View.VISIBLE);
                     this.textViewInfo.setText(getResources().getString(R.string.text_fail_sent_data_to_system));
+                    progressBarSendData.setVisibility(View.INVISIBLE);
                 }else{
+                    progressBarSendData.setVisibility(View.INVISIBLE);
                     this.imageViewSuccess.setVisibility(View.VISIBLE);
                     this.textViewInfo.setText(getResources().getString(R.string.text_success_sent_data_to_system));
                 }
