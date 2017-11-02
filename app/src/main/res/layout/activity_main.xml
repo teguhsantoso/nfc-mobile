@@ -85,6 +85,18 @@
         android:layout_alignEnd="@+id/textViewTimestamp"
         android:layout_toEndOf="@+id/imageViewWarning" />
 
+    <ProgressBar
+        android:id="@+id/progressBarConnecting"
+        style="?android:attr/progressBarStyle"
+        android:indeterminateTint="@color/lightGrey"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="32dp"
+        android:visibility="invisible"
+        android:layout_below="@+id/textViewTimestamp"
+        android:layout_alignStart="@+id/textViewTimestamp"
+        android:layout_centerHorizontal="true" />
+
     <ImageView
         android:layout_width="50dp"
         android:layout_height="50dp"

@@ -25,6 +25,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
     private TextView            textViewTimetamp;
     private ImageView           imageViewWarning;
     private ImageView           imageViewSuccess;
+    private ProgressBar         progressBarSendData;
     private long                back_pressed_time;
     private NfcAdapter          nfcAdapter;
     private RequestQueue        mQueue;
@@ -130,6 +132,8 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
         this.imageViewSuccess = (ImageView)findViewById(R.id.imageViewSuccess);
         this.imageViewSuccess.setVisibility(View.GONE);
         this.textViewInfo = (TextView)findViewById(R.id.textViewReport);
+        this.progressBarSendData = (ProgressBar)findViewById(R.id.progressBarConnecting);
+        this.progressBarSendData.setVisibility(View.INVISIBLE);
 
         // Initialize the NFC adapter for reading the tag UID.
         this.nfcAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -220,13 +224,13 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
 
             // Retrieve the tag UID from intent, it contains 7 bytes.
             String tagID = AppUtility.getInstance().convertByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
-            Log.d(Constant.LOGGER, ">>> Found Tag-ID: " + tagID);
 
             // Refresh the UI elements contents and states.
             this.textViewTagId.setVisibility(View.VISIBLE);
             if(tagID == null){
                 this.textViewTagId.setText(getResources().getString(R.string.text_no_tag_id_found));
             }else{
+                this.imageViewSuccess.setVisibility(View.INVISIBLE);
                 this.imageViewWarning.setVisibility(View.INVISIBLE);
                 this.textViewTimetamp.setVisibility(View.INVISIBLE);
                 this.textViewInfo.setText("");
@@ -393,7 +397,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                         this.textViewInfo.setText(mData.getString(Constant.JSON_PARAM_NAME) + "," + getResources().getString(R.string.text_data_sent_to_system));
                         new CountDownTimer(Constant.PARAM_TIMER_DURATION_MILLIS, Constant.PARAM_TIMER_INTERVAL_MILLIS) {
                             public void onTick(long millisUntilFinished) {
-                                // TODO
+                                progressBarSendData.setVisibility(View.VISIBLE);
                             }
                             public void onFinish() {
                                 try {
@@ -410,11 +414,14 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                         this.textViewInfo.setText(getResources().getString(R.string.text_unknown_card));
                 }
             }else if(volleyOperationMode == Constant.VOLLEY_POST_OPERATION){
+                progressBarSendData.setVisibility(View.INVISIBLE);
                 JSONObject mData = (JSONObject) response;
                 String mString = mData.getString(Constant.JSON_PARAM_MESSAGE);
                 if(!mString.trim().equals(Constant.PARAM_OK)){
+                    this.imageViewWarning.setVisibility(View.VISIBLE);
                     this.textViewInfo.setText(getResources().getString(R.string.text_fail_sent_data_to_system));
                 }else{
+                    this.imageViewSuccess.setVisibility(View.VISIBLE);
                     this.textViewInfo.setText(getResources().getString(R.string.text_success_sent_data_to_system));
                 }
             }
