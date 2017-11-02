@@ -238,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                 };
 
                 // Send request to volley queue based on webservice address.
-                String urlWS = Constant.WEBSERVICE_URL_ADDRESS + tagID;
+                String urlWS = Constant.WEBSERVICE_URL_ADDRESS_GET + tagID;
                 final CustomJsonRequest jsonRequest = new CustomJsonRequest(Request.Method.GET, urlWS, new JSONObject(), this, this);
                 jsonRequest.setTag(Constant.REQUEST_TAG);
                 volleyOperationMode = 0;
@@ -287,7 +287,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                 String[] parts = line.trim().split(",");
                 String tagId = parts[0];
                 String timestamp = parts[1];
-                NFCData newData = new NFCData(tagId, timestamp);
+                NFCData newData = new NFCData(tagId, null, timestamp, null);
                 storageData.add(newData);
             }
             br.close();
@@ -411,13 +411,13 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
     }
 
     private void sendDataAbsenceToServer() {
-        String url = "http://api.jeni-us.xyz/api/absen/push";
-
+        // Prepare the post method parameters for volley.
         HashMap<String, String> params = new HashMap<String, String>();
-        params.put("tag_id", "04921332333580");
-        params.put("timestamp", "2017-11-02 10:16:00");
+        params.put(Constant.JSON_PARAM_TAG_ID, "04921332333580");
+        params.put(Constant.JSON_PARAM_TIMESTAMP, "2017-11-02 10:16:00");
 
-        final CustomJsonRequest jsonRequest = new CustomJsonRequest(Request.Method.POST, url, new JSONObject(params), this, this);
+        // Send post request using volley queue.
+        final CustomJsonRequest jsonRequest = new CustomJsonRequest(Request.Method.POST, Constant.WEBSERVICE_URL_ADDRESS_POST, new JSONObject(params), this, this);
         jsonRequest.setTag(Constant.REQUEST_TAG);
         volleyOperationMode = 1;
         mQueue.add(jsonRequest);

@@ -12,11 +12,15 @@ import java.io.Serializable;
 public class NFCData implements Serializable {
     private static final long serialVersionUID = -3496408271787886660L;
     private String tagId;
+    private String name;
     private String timestamp;
+    private String status;
 
-    public NFCData(String tagId, String timestamp) {
+    public NFCData(String tagId, String name, String timestamp, String status) {
         this.tagId = tagId;
+        this.name = name;
         this.timestamp = timestamp;
+        this.status = status;
     }
 
     public String getTagId() {
@@ -33,5 +37,25 @@ public class NFCData implements Serializable {
 
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
