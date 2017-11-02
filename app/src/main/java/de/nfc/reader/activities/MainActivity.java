@@ -104,20 +104,8 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
         // Set the current context on this activity.
         cTxt = this;
 
-        // Prepare the root directory and the data.txt file.
-        File root = android.os.Environment.getExternalStorageDirectory();
-        File dir = new File (root.getAbsolutePath() + ROOT_DIR_NAME);
-        if(!dir.exists()){
-            dir.mkdirs();
-        }
-        File file = new File(dir, DATA_FILE_NAME);
-        if (!file.exists()){
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        // Prepare data for absence inside external storage device.
+        //prepareDataAbsenceInStorage();
 
         // Initialize all UI elements.
         this.textViewAppVersionNumber = (TextView)findViewById(R.id.textViewVersionNumber);
@@ -269,6 +257,22 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();
+    }
+
+    private void prepareDataAbsenceInStorage(){
+        File root = android.os.Environment.getExternalStorageDirectory();
+        File dir = new File (root.getAbsolutePath() + ROOT_DIR_NAME);
+        if(!dir.exists()){
+            dir.mkdirs();
+        }
+        File file = new File(dir, DATA_FILE_NAME);
+        if (!file.exists()){
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void verifyStoragePermissions(Activity activity) {
