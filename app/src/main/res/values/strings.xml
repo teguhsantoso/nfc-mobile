@@ -14,4 +14,5 @@
     <string name="text_user_presence_recorded">Your presence was recorded successfully.</string>
     <string name="text_no_internet_connection">No internet connection.</string>
     <string name="text_unknown_card">Kartu NFC anda tidak dikenal oleh system.</string>
+    <string name="text_data_sent_to_system">data absensi anda akan dikirim ke system kami.</string>
 </resources>

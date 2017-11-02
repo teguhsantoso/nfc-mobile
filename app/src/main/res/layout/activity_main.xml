@@ -69,7 +69,7 @@
         android:layout_height="50dp"
         app:srcCompat="@drawable/ic_settings_white_24dp"
         android:scaleType="fitCenter"
-        android:onClick="openSetting"
+        android:visibility="invisible"
         android:id="@+id/imageButton"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true" />

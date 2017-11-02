@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import de.nfc.reader.R;
@@ -216,6 +217,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
 
             // Retrieve the tag UID from intent, it contains 7 bytes.
             String tagID = AppUtility.getInstance().convertByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
+            Log.d(Constant.LOGGER, ">>> Found Tag-ID: " + tagID);
 
             // Refresh the UI elements contents and states.
             this.textViewTagId.setVisibility(View.VISIBLE);
@@ -242,10 +244,6 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
 
             }
         }
-    }
-
-    public void openSetting(View view){
-        Toast.makeText(getBaseContext(), "Coming soon", Toast.LENGTH_SHORT).show();
     }
 
     private String getCurrentTimestamp(){
@@ -375,6 +373,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
     public void onResponse(Object response) {
         try {
             JSONObject mData = (JSONObject) response;
+            Log.d(Constant.LOGGER, ">>> Response server: " + response.toString());
             switch(Integer.valueOf(mData.getString(Constant.JSON_PARAM_STATUS))){
                 case 0:
                     this.imageViewWarning.setVisibility(View.VISIBLE);
@@ -384,7 +383,8 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                 case 1:
                     this.textViewTimetamp.setVisibility(View.VISIBLE);
                     this.textViewTimetamp.setText(getResources().getString(R.string.text_timestamp) + ":" + getCurrentTimestamp());
-                    this.textViewInfo.setText(mData.getString(Constant.JSON_PARAM_NAME) + ", data absensi anda akan dikirim ke server...");
+                    this.textViewInfo.setText(mData.getString(Constant.JSON_PARAM_NAME) + "," + getResources().getString(R.string.text_data_sent_to_system));
+                    sendDataAbsenceToServer();
                     break;
                 default:
                     this.imageViewWarning.setVisibility(View.VISIBLE);
@@ -395,5 +395,17 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
             e.printStackTrace();
         }
 
+    }
+
+    private void sendDataAbsenceToServer() {
+        String url = "http://api.jeni-us.xyz/api/absen/push";
+
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put("tag_id", "04921332333580");
+        params.put("timestamp", "2017-11-02 09:10:00");
+
+        final CustomJsonRequest jsonRequest = new CustomJsonRequest(Request.Method.POST, url, new JSONObject(params), this, this);
+        jsonRequest.setTag(Constant.REQUEST_TAG);
+        mQueue.add(jsonRequest);
     }
 }
