@@ -33,4 +33,5 @@ public class Constant {
     public static final String              JSON_PARAM_NAME = "nama";
     public static final String              JSON_PARAM_STATUS = "status";
     public static final String              JSON_PARAM_TIMESTAMP = "timestamp";
+    public static final String              JSON_PARAM_MESSAGE = "message";
 }

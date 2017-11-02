@@ -19,6 +19,7 @@ import android.nfc.tech.NfcB;
 import android.nfc.tech.NfcF;
 import android.nfc.tech.NfcV;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -377,7 +378,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
 
             // Validation for the volley operation mode, 0 = GET, 1 = POST.
             if(volleyOperationMode == Constant.VOLLEY_GET_OPERATION){
-                JSONObject mData = (JSONObject) response;
+                final JSONObject mData = (JSONObject) response;
                 switch(Integer.valueOf(mData.getString(Constant.JSON_PARAM_STATUS))){
                     case 0:
                         this.imageViewWarning.setVisibility(View.VISIBLE);
@@ -388,7 +389,18 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                         this.textViewTimetamp.setVisibility(View.VISIBLE);
                         this.textViewTimetamp.setText(getResources().getString(R.string.text_timestamp) + ":" + getCurrentTimestamp());
                         this.textViewInfo.setText(mData.getString(Constant.JSON_PARAM_NAME) + "," + getResources().getString(R.string.text_data_sent_to_system));
-                        sendDataAbsenceToServer();
+                        new CountDownTimer(1000, 500) {
+                            public void onTick(long millisUntilFinished) {
+                                // TODO
+                            }
+                            public void onFinish() {
+                                try {
+                                    sendDataAbsenceToServer(mData.getString(Constant.JSON_PARAM_TAG_ID), textViewTimetamp.getText().toString());
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }.start();
                         break;
                     default:
                         this.imageViewWarning.setVisibility(View.VISIBLE);
@@ -397,11 +409,11 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                 }
             }else if(volleyOperationMode == Constant.VOLLEY_POST_OPERATION){
                 JSONObject mData = (JSONObject) response;
-                String mString = mData.getString("message");
-                Log.d(Constant.LOGGER, ">>> Message: " + mString);
-                this.textViewTimetamp.setVisibility(View.INVISIBLE);
-                this.textViewTimetamp.setText("");
-                this.textViewInfo.setText(mString);
+                String mString = mData.getString(Constant.JSON_PARAM_MESSAGE);
+                if(mString.trim().equals("Ok")){
+                    this.textViewInfo.setText("Data absensi anda berhasil dikirim ke sistem.");
+                }
+
             }
 
         } catch (JSONException e) {
@@ -410,10 +422,10 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
 
     }
 
-    private void sendDataAbsenceToServer() {
+    private void sendDataAbsenceToServer(String strTagId, String strTimestamp) {
         // Prepare the post method parameters for volley.
         HashMap<String, String> params = new HashMap<String, String>();
-        params.put(Constant.JSON_PARAM_TAG_ID, "04921332333580");
+        params.put(Constant.JSON_PARAM_TAG_ID, strTagId);
         params.put(Constant.JSON_PARAM_TIMESTAMP, "2017-11-02 10:16:00");
 
         // Send post request using volley queue.
