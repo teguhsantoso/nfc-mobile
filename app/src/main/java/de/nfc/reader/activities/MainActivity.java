@@ -67,7 +67,6 @@ import static de.nfc.reader.util.Constant.ROOT_DIR_NAME;
  *
  */
 public class MainActivity extends AppCompatActivity implements Response.Listener, Response.ErrorListener {
-    public static final String  REQUEST_TAG = "MainVolleyActivity";
     private Context             cTxt;
     private TextView            textViewInfo;
     private TextView            textViewAppVersionNumber;
@@ -193,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
     protected void onStop() {
         super.onStop();
         if (mQueue != null) {
-            mQueue.cancelAll(REQUEST_TAG);
+            mQueue.cancelAll(Constant.REQUEST_TAG);
         }
     }
 
@@ -217,32 +216,28 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
 
             // Retrieve the tag UID from intent, it contains 7 bytes.
             String tagID = AppUtility.getInstance().convertByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
-            String strTimestamp = getCurrentTimestamp();
 
             // Refresh the UI elements contents and states.
             this.textViewTagId.setVisibility(View.VISIBLE);
-            this.textViewTimetamp.setVisibility(View.VISIBLE);
             if(tagID == null){
                 this.textViewTagId.setText(getResources().getString(R.string.text_no_tag_id_found));
             }else{
+                this.imageViewWarning.setVisibility(View.INVISIBLE);
+                this.textViewTimetamp.setVisibility(View.INVISIBLE);
+                this.textViewInfo.setText("");
                 this.textViewTagId.setText(getResources().getString(R.string.text_tag_id) + ":" + tagID);
-                this.textViewTimetamp.setText(getResources().getString(R.string.text_timestamp) + ":" + strTimestamp);
-
-                // Store NFC data in text file inside external storage device.
-                //storeNFCData(new NFCData(tagID, strTimestamp));
 
                 // Check if internet connection is available.
                 if(!AppUtility.getInstance().isInternetConnectionAvailable(5000)){
-                    Log.d(Constant.LOGGER, ">>>>>>> No internet connection.");
-                    // TODO
-                    // Show warning message if no internet connection.
+                    this.imageViewWarning.setVisibility(View.VISIBLE);
+                    this.textViewInfo.setText(getResources().getString(R.string.text_no_internet_connection));
                     return;
                 };
 
                 // Send request to volley queue based on webservice address.
                 String urlWS = Constant.WEBSERVICE_URL_ADDRESS + tagID;
                 final CustomJsonRequest jsonRequest = new CustomJsonRequest(Request.Method.GET, urlWS, new JSONObject(), this, this);
-                jsonRequest.setTag(REQUEST_TAG);
+                jsonRequest.setTag(Constant.REQUEST_TAG);
                 mQueue.add(jsonRequest);
 
             }
@@ -358,7 +353,6 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                 outStreamWriter = new OutputStreamWriter(fos);
                 outStreamWriter.append(data.getTagId() + "," + data.getTimestamp()).append("\n");
                 outStreamWriter.flush();
-                Log.d(Constant.LOGGER, ">>> Data for tag-ID " + data.getTagId() + " was stored successfully.");
                 fos.close();
                 return true;
             } catch (Throwable throwable) {
@@ -372,16 +366,31 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        Log.d(Constant.LOGGER, ">>> Response error server: " + error.getLocalizedMessage());
+        this.imageViewWarning.setVisibility(View.VISIBLE);
+        this.textViewTimetamp.setVisibility(View.INVISIBLE);
+        this.textViewInfo.setText(getResources().getString(R.string.text_unknown_card));
     }
 
     @Override
     public void onResponse(Object response) {
         try {
             JSONObject mData = (JSONObject) response;
-            Log.d(Constant.LOGGER, ">>> User name: " + mData.getString("nama"));
-            Log.d(Constant.LOGGER, ">>> Tag-ID: " + mData.getString("tag_id"));
-            Log.d(Constant.LOGGER, ">>> Status: " + mData.getString("status"));
+            switch(Integer.valueOf(mData.getString(Constant.JSON_PARAM_STATUS))){
+                case 0:
+                    this.imageViewWarning.setVisibility(View.VISIBLE);
+                    this.textViewTimetamp.setVisibility(View.INVISIBLE);
+                    this.textViewInfo.setText(getResources().getString(R.string.text_unknown_card));
+                    break;
+                case 1:
+                    this.textViewTimetamp.setVisibility(View.VISIBLE);
+                    this.textViewTimetamp.setText(getResources().getString(R.string.text_timestamp) + ":" + getCurrentTimestamp());
+                    this.textViewInfo.setText(mData.getString(Constant.JSON_PARAM_NAME) + ", data absensi anda akan dikirim ke server...");
+                    break;
+                default:
+                    this.imageViewWarning.setVisibility(View.VISIBLE);
+                    this.textViewTimetamp.setVisibility(View.INVISIBLE);
+                    this.textViewInfo.setText(getResources().getString(R.string.text_unknown_card));
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

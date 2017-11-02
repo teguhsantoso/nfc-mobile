@@ -12,4 +12,6 @@
     <string name="text_data_file_not_found">File data.txt was not found.</string>
     <string name="text_user_tapped_twice_today">You already tapped twice today.</string>
     <string name="text_user_presence_recorded">Your presence was recorded successfully.</string>
+    <string name="text_no_internet_connection">No internet connection.</string>
+    <string name="text_unknown_card">Kartu NFC anda tidak dikenal oleh system.</string>
 </resources>

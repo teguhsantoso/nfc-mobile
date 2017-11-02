@@ -31,7 +31,6 @@
         android:layout_alignStart="@+id/imageView" />
 
     <TextView
-        android:text="Tag-ID: 0123456789"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textViewPassNFC"
@@ -43,7 +42,6 @@
         android:layout_alignEnd="@+id/textViewPassNFC" />
 
     <TextView
-        android:text="Timestamp: dd.MM.yyyy HH:mm:ss"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textViewTagId"
@@ -77,7 +75,6 @@
         android:layout_alignParentEnd="true" />
 
     <TextView
-        android:text="Text information"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textViewReport"
