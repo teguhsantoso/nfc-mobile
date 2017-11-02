@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
     private long                back_pressed_time;
     private NfcAdapter          nfcAdapter;
     private RequestQueue        mQueue;
+    private int                 volleyOperationMode;
 
     // List of NFC technologies available for this app:
     private final String[][] techList = new String[][] {
@@ -240,6 +241,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                 String urlWS = Constant.WEBSERVICE_URL_ADDRESS + tagID;
                 final CustomJsonRequest jsonRequest = new CustomJsonRequest(Request.Method.GET, urlWS, new JSONObject(), this, this);
                 jsonRequest.setTag(Constant.REQUEST_TAG);
+                volleyOperationMode = 0;
                 mQueue.add(jsonRequest);
 
             }
@@ -372,25 +374,36 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
     @Override
     public void onResponse(Object response) {
         try {
-            JSONObject mData = (JSONObject) response;
-            Log.d(Constant.LOGGER, ">>> Response server: " + response.toString());
-            switch(Integer.valueOf(mData.getString(Constant.JSON_PARAM_STATUS))){
-                case 0:
-                    this.imageViewWarning.setVisibility(View.VISIBLE);
-                    this.textViewTimetamp.setVisibility(View.INVISIBLE);
-                    this.textViewInfo.setText(getResources().getString(R.string.text_unknown_card));
-                    break;
-                case 1:
-                    this.textViewTimetamp.setVisibility(View.VISIBLE);
-                    this.textViewTimetamp.setText(getResources().getString(R.string.text_timestamp) + ":" + getCurrentTimestamp());
-                    this.textViewInfo.setText(mData.getString(Constant.JSON_PARAM_NAME) + "," + getResources().getString(R.string.text_data_sent_to_system));
-                    sendDataAbsenceToServer();
-                    break;
-                default:
-                    this.imageViewWarning.setVisibility(View.VISIBLE);
-                    this.textViewTimetamp.setVisibility(View.INVISIBLE);
-                    this.textViewInfo.setText(getResources().getString(R.string.text_unknown_card));
+
+            // Validation for the volley operation mode, 0 = GET, 1 = POST.
+            if(volleyOperationMode == Constant.VOLLEY_GET_OPERATION){
+                JSONObject mData = (JSONObject) response;
+                switch(Integer.valueOf(mData.getString(Constant.JSON_PARAM_STATUS))){
+                    case 0:
+                        this.imageViewWarning.setVisibility(View.VISIBLE);
+                        this.textViewTimetamp.setVisibility(View.INVISIBLE);
+                        this.textViewInfo.setText(getResources().getString(R.string.text_unknown_card));
+                        break;
+                    case 1:
+                        this.textViewTimetamp.setVisibility(View.VISIBLE);
+                        this.textViewTimetamp.setText(getResources().getString(R.string.text_timestamp) + ":" + getCurrentTimestamp());
+                        this.textViewInfo.setText(mData.getString(Constant.JSON_PARAM_NAME) + "," + getResources().getString(R.string.text_data_sent_to_system));
+                        sendDataAbsenceToServer();
+                        break;
+                    default:
+                        this.imageViewWarning.setVisibility(View.VISIBLE);
+                        this.textViewTimetamp.setVisibility(View.INVISIBLE);
+                        this.textViewInfo.setText(getResources().getString(R.string.text_unknown_card));
+                }
+            }else if(volleyOperationMode == Constant.VOLLEY_POST_OPERATION){
+                JSONObject mData = (JSONObject) response;
+                String mString = mData.getString("message");
+                Log.d(Constant.LOGGER, ">>> Message: " + mString);
+                this.textViewTimetamp.setVisibility(View.INVISIBLE);
+                this.textViewTimetamp.setText("");
+                this.textViewInfo.setText(mString);
             }
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -402,10 +415,11 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
 
         HashMap<String, String> params = new HashMap<String, String>();
         params.put("tag_id", "04921332333580");
-        params.put("timestamp", "2017-11-02 09:10:00");
+        params.put("timestamp", "2017-11-02 10:16:00");
 
         final CustomJsonRequest jsonRequest = new CustomJsonRequest(Request.Method.POST, url, new JSONObject(params), this, this);
         jsonRequest.setTag(Constant.REQUEST_TAG);
+        volleyOperationMode = 1;
         mQueue.add(jsonRequest);
     }
 }
