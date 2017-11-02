@@ -23,6 +23,8 @@ public class Constant {
     public static final int                 INT_MAX_NFC_TAP = 2;
     public static final int                 VOLLEY_GET_OPERATION = 0;
     public static final int                 VOLLEY_POST_OPERATION = 1;
+    public static final int                 PARAM_TIMER_DURATION_MILLIS = 1000;
+    public static final int                 PARAM_TIMER_INTERVAL_MILLIS = 500;
     public static String[]                  PERMISSIONS_STORAGE = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
     public static final String              ROOT_DIR_NAME = "/NFC-App";
     public static final String              DATA_FILE_NAME = "data.txt";
@@ -34,4 +36,5 @@ public class Constant {
     public static final String              JSON_PARAM_STATUS = "status";
     public static final String              JSON_PARAM_TIMESTAMP = "timestamp";
     public static final String              JSON_PARAM_MESSAGE = "message";
+    public static final String              PARAM_OK = "Ok";
 }

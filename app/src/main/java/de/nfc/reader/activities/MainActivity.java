@@ -389,7 +389,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                         this.textViewTimetamp.setVisibility(View.VISIBLE);
                         this.textViewTimetamp.setText(getResources().getString(R.string.text_timestamp) + ":" + getCurrentTimestamp());
                         this.textViewInfo.setText(mData.getString(Constant.JSON_PARAM_NAME) + "," + getResources().getString(R.string.text_data_sent_to_system));
-                        new CountDownTimer(1000, 500) {
+                        new CountDownTimer(Constant.PARAM_TIMER_DURATION_MILLIS, Constant.PARAM_TIMER_INTERVAL_MILLIS) {
                             public void onTick(long millisUntilFinished) {
                                 // TODO
                             }
@@ -410,10 +410,11 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
             }else if(volleyOperationMode == Constant.VOLLEY_POST_OPERATION){
                 JSONObject mData = (JSONObject) response;
                 String mString = mData.getString(Constant.JSON_PARAM_MESSAGE);
-                if(mString.trim().equals("Ok")){
-                    this.textViewInfo.setText("Data absensi anda berhasil dikirim ke sistem.");
+                if(!mString.trim().equals(Constant.PARAM_OK)){
+                    this.textViewInfo.setText(getResources().getString(R.string.text_fail_sent_data_to_system));
+                }else{
+                    this.textViewInfo.setText(getResources().getString(R.string.text_success_sent_data_to_system));
                 }
-
             }
 
         } catch (JSONException e) {
