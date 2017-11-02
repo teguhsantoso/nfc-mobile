@@ -243,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                 String urlWS = Constant.WEBSERVICE_URL_ADDRESS_GET + tagID;
                 final CustomJsonRequest jsonRequest = new CustomJsonRequest(Request.Method.GET, urlWS, new JSONObject(), this, this);
                 jsonRequest.setTag(Constant.REQUEST_TAG);
-                volleyOperationMode = 0;
+                volleyOperationMode = Constant.VOLLEY_GET_OPERATION;
                 mQueue.add(jsonRequest);
 
             }
@@ -434,7 +434,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
         // Send post request using volley queue.
         final CustomJsonRequest jsonRequest = new CustomJsonRequest(Request.Method.POST, Constant.WEBSERVICE_URL_ADDRESS_POST, new JSONObject(params), this, this);
         jsonRequest.setTag(Constant.REQUEST_TAG);
-        volleyOperationMode = 1;
+        volleyOperationMode = Constant.VOLLEY_POST_OPERATION;
         mQueue.add(jsonRequest);
     }
 }
