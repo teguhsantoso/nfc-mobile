@@ -46,6 +46,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.nfc.reader.R;
 import de.nfc.reader.entities.NFCData;
@@ -387,7 +388,8 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                         break;
                     case 1:
                         this.textViewTimetamp.setVisibility(View.VISIBLE);
-                        this.textViewTimetamp.setText(getResources().getString(R.string.text_timestamp) + ":" + getCurrentTimestamp());
+                        final String strTimestamp = getCurrentTimestamp();
+                        this.textViewTimetamp.setText(getResources().getString(R.string.text_timestamp) + ":" + strTimestamp);
                         this.textViewInfo.setText(mData.getString(Constant.JSON_PARAM_NAME) + "," + getResources().getString(R.string.text_data_sent_to_system));
                         new CountDownTimer(Constant.PARAM_TIMER_DURATION_MILLIS, Constant.PARAM_TIMER_INTERVAL_MILLIS) {
                             public void onTick(long millisUntilFinished) {
@@ -395,7 +397,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                             }
                             public void onFinish() {
                                 try {
-                                    sendDataAbsenceToServer(mData.getString(Constant.JSON_PARAM_TAG_ID), textViewTimetamp.getText().toString());
+                                    sendDataAbsenceToServer(mData.getString(Constant.JSON_PARAM_TAG_ID), strTimestamp);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -425,9 +427,9 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
 
     private void sendDataAbsenceToServer(String strTagId, String strTimestamp) {
         // Prepare the post method parameters for volley.
-        HashMap<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<String, String>();
         params.put(Constant.JSON_PARAM_TAG_ID, strTagId);
-        params.put(Constant.JSON_PARAM_TIMESTAMP, "2017-11-02 10:16:00");
+        params.put(Constant.JSON_PARAM_TIMESTAMP, strTimestamp);
 
         // Send post request using volley queue.
         final CustomJsonRequest jsonRequest = new CustomJsonRequest(Request.Method.POST, Constant.WEBSERVICE_URL_ADDRESS_POST, new JSONObject(params), this, this);
