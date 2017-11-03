@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
 
         // Initialize all UI elements.
         TextView textViewAppVersionNumber = findViewById(R.id.textViewVersionNumber);
-        textViewAppVersionNumber.setText("v" + AppUtility.getInstance().getAppVersionNumber(cTxt));
+        textViewAppVersionNumber.setText(AppUtility.getInstance().getAppVersionNumber(cTxt));
         this.textViewTagId = findViewById(R.id.textViewTagId);
         this.textViewTagId.setVisibility(View.GONE);
         this.textViewTimestamp = findViewById(R.id.textViewTimestamp);

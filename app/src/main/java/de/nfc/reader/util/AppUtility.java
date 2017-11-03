@@ -40,7 +40,7 @@ public class AppUtility {
         }catch(Throwable throwable){
             Log.e(Constant.LOGGER, throwable.getLocalizedMessage());
         }
-        return retVal;
+        return "v" + retVal;
     }
 
     public String convertByteArrayToHexString(byte[] inByteArray) {
