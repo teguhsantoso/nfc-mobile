@@ -48,7 +48,6 @@
         android:layout_alignStart="@+id/textViewTagId"
         android:textSize="14sp"
         android:gravity="center_horizontal"
-        android:layout_marginTop="12dp"
         android:id="@+id/textViewTimestamp"
         android:layout_alignEnd="@+id/textViewTagId" />
 

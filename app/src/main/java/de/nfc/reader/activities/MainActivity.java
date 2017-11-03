@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                 this.imageViewWarning.setVisibility(View.INVISIBLE);
                 this.textViewTimetamp.setVisibility(View.INVISIBLE);
                 this.textViewInfo.setText("");
-                this.textViewTagId.setText(getResources().getString(R.string.text_tag_id) + ":" + tagID);
+                this.textViewTagId.setText(getResources().getString(R.string.text_tag_id) + ": " + tagID);
 
                 // Check if internet connection is available.
                 if(!AppUtility.getInstance().isInternetConnectionAvailable(5000)){
@@ -398,8 +398,9 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                         break;
                     case 1:
                         this.textViewTimetamp.setVisibility(View.VISIBLE);
+                        final String strName = ((JSONObject) response).getString(Constant.JSON_PARAM_NAME);
                         final String strTimestamp = getCurrentTimestamp();
-                        this.textViewTimetamp.setText(getResources().getString(R.string.text_timestamp) + ":" + strTimestamp);
+                        this.textViewTimetamp.setText(getResources().getString(R.string.text_name) + ": " + strName + "\n" + getResources().getString(R.string.text_timestamp) + ": " + strTimestamp);
                         this.textViewInfo.setText(getResources().getString(R.string.text_data_sent_to_system));
                         sendDataAbsenceToServer(mData.getString(Constant.JSON_PARAM_TAG_ID), strTimestamp);
                         break;
