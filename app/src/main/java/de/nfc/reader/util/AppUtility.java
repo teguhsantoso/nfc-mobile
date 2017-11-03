@@ -80,7 +80,7 @@ public class AppUtility {
         } catch (TimeoutException e) {
             Log.e(Constant.LOGGER, e.getLocalizedMessage());
         }
-        return inetAddress!=null && !inetAddress.equals("");
+        return inetAddress!=null && !inetAddress.isAnyLocalAddress();
     }
 
 }

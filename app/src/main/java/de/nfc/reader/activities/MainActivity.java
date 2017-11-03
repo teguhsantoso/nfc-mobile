@@ -245,22 +245,6 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
         finish();
     }
 
-    //private void prepareDataAbsenceInStorage(){
-    //    File root = android.os.Environment.getExternalStorageDirectory();
-    //    File dir = new File (root.getAbsolutePath() + ROOT_DIR_NAME);
-    //    if(!dir.exists()){
-    //        dir.mkdirs();
-    //    }
-    //    File file = new File(dir, DATA_FILE_NAME);
-    //    if (!file.exists()){
-    //        try {
-    //            file.createNewFile();
-    //        } catch (IOException e) {
-    //            e.printStackTrace();
-    //        }
-    //    }
-    //}
-
     private void verifyStoragePermissions(Activity activity) {
         int writePermission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int readPermission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -335,7 +319,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
         params.put(Constant.JSON_PARAM_TIMESTAMP, strTimestamp);
 
         // Send post request using volley queue.
-        // noinspection unchecked
+        @SuppressWarnings("unchecked")
         final CustomJsonRequest jsonRequest = new CustomJsonRequest(Request.Method.POST, Constant.WEBSERVICE_URL_ADDRESS_POST, new JSONObject(params), this, this);
         jsonRequest.setTag(Constant.REQUEST_TAG);
         volleyOperationMode = Constant.VOLLEY_POST_OPERATION;
