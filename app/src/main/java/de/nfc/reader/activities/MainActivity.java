@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                     this.imageViewWarning.setVisibility(View.INVISIBLE);
                     this.textViewTimestamp.setVisibility(View.INVISIBLE);
                     this.textViewInfo.setText("");
-                    this.textViewTagId.setText(getResources().getString(R.string.text_tag_id) + ": " + tagID);
+                    this.textViewTagId.setText(getResources().getString(R.string.text_tag_id, tagID));
 
                     // Check if internet connection is available.
                     if(!AppUtility.getInstance().isInternetConnectionAvailable()){
