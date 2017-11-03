@@ -2,7 +2,6 @@ package de.nfc.reader.util;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONObject;
@@ -30,8 +29,4 @@ public class CustomJsonRequest extends JsonObjectRequest {
         return headers;
     }
 
-    @Override
-    public RetryPolicy getRetryPolicy() {
-        return super.getRetryPolicy();
-    }
 }

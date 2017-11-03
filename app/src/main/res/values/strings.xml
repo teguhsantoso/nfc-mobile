@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">NFC-App</string>
+    <string name="text_content_description">Image content description</string>
     <string name="text_press_once_again">Tekan tombol back button dua kali untuk menutup App ini.</string>
     <string name="text_pass_nfc_card">Silahkan mengetap kartu NFC absensi anda.</string>
     <string name="text_data_nfc_filepath">Semua data NFC disimpan dalam ordner NFC-App/data.txt</string>

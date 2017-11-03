@@ -3,6 +3,7 @@ package de.nfc.reader.util;
 import android.Manifest;
 
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 /**
  *
@@ -14,8 +15,8 @@ import java.text.SimpleDateFormat;
 public class Constant {
     public static final String              LOGGER = "LOGGER";
     public static final long                TIME_MILIS_PERIOD_BACKPRESSED = 3000;
-    public static final SimpleDateFormat    dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    public static final SimpleDateFormat    dayFormatter = new SimpleDateFormat("yyyy-MM-dd");
+    public static final SimpleDateFormat    dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+    public static final SimpleDateFormat    dayFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
     public static final int                 REQUEST_EXTERNAL_STORAGE = 1;
     public static final int                 BEEP_VOLUME_LEVEL = 100;
     public static final int                 BEEP_START_TIME = 200;
@@ -25,7 +26,7 @@ public class Constant {
     public static final int                 VOLLEY_POST_OPERATION = 1;
     public static final int                 PARAM_TIMER_DURATION_MILLIS = 1000;
     public static final int                 PARAM_TIMER_INTERVAL_MILLIS = 500;
-    public static String[]                  PERMISSIONS_STORAGE = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    public static final String[]                  PERMISSIONS_STORAGE = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
     public static final String              ROOT_DIR_NAME = "/NFC-App";
     public static final String              DATA_FILE_NAME = "data.txt";
     public static final String              REQUEST_TAG = "MainVolleyActivity";

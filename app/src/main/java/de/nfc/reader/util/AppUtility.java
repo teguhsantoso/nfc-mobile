@@ -38,7 +38,7 @@ public class AppUtility {
         try{
             retVal = cTxt.getPackageManager().getPackageInfo(cTxt.getPackageName(), 0).versionName;
         }catch(Throwable throwable){
-            Log.e(Constant.LOGGER, throwable.getLocalizedMessage().toString());
+            Log.e(Constant.LOGGER, throwable.getLocalizedMessage());
         }
         return retVal;
     }
@@ -46,19 +46,19 @@ public class AppUtility {
     public String convertByteArrayToHexString(byte[] inByteArray) {
         int i, j, in;
         String [] hex = {"0","1","2","3","4","5","6","7","8","9","A","B","C","D","E","F"};
-        String out= "";
+        StringBuilder out= new StringBuilder();
         for(j = 0 ; j < inByteArray.length ; ++j)
         {
             in = (int) inByteArray[j] & 0xff;
             i = (in >> 4) & 0x0f;
-            out += hex[i];
+            out.append(hex[i]);
             i = in & 0x0f;
-            out += hex[i];
+            out.append(hex[i]);
         }
-        return out;
+        return out.toString();
     }
 
-    public boolean isInternetConnectionAvailable(int timeOut) {
+    public boolean isInternetConnectionAvailable() {
         InetAddress inetAddress = null;
         try {
             Future<InetAddress> future = Executors.newSingleThreadExecutor().submit(new Callable<InetAddress>() {
@@ -71,7 +71,7 @@ public class AppUtility {
                     }
                 }
             });
-            inetAddress = future.get(timeOut, TimeUnit.MILLISECONDS);
+            inetAddress = future.get(5000, TimeUnit.MILLISECONDS);
             future.cancel(true);
         } catch (InterruptedException e) {
         } catch (ExecutionException e) {

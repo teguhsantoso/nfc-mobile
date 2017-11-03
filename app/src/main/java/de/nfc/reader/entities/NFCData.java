@@ -16,11 +16,11 @@ public class NFCData implements Serializable {
     private String timestamp;
     private String status;
 
-    public NFCData(String tagId, String name, String timestamp, String status) {
+    public NFCData(String tagId, String timestamp) {
         this.tagId = tagId;
-        this.name = name;
+        this.name = null;
         this.timestamp = timestamp;
-        this.status = status;
+        this.status = null;
     }
 
     public String getTagId() {

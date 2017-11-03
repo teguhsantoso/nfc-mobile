@@ -17,5 +17,5 @@
         android:id="@+id/imageViewIcon"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:contentDescription="TODO" />
+        android:contentDescription="@string/text_content_description" />
 </RelativeLayout>

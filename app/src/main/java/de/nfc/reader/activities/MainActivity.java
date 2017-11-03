@@ -70,9 +70,7 @@ import static de.nfc.reader.util.Constant.ROOT_DIR_NAME;
  *
  */
 public class MainActivity extends AppCompatActivity implements Response.Listener, Response.ErrorListener {
-    private Context             cTxt;
     private TextView            textViewInfo;
-    private TextView            textViewAppVersionNumber;
     private TextView            textViewTagId;
     private TextView            textViewTimetamp;
     private ImageView           imageViewWarning;
@@ -102,14 +100,14 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
         setContentView(R.layout.activity_main);
 
         // Set the current context on this activity.
-        cTxt = this;
+        Context cTxt = this;
 
         // Prepare data for absence inside external storage device.
         //prepareDataAbsenceInStorage();
 
         // Initialize all UI elements.
-        this.textViewAppVersionNumber = (TextView)findViewById(R.id.textViewVersionNumber);
-        this.textViewAppVersionNumber.setText("v" + AppUtility.getInstance().getAppVersionNumber(cTxt));
+        TextView textViewAppVersionNumber = (TextView) findViewById(R.id.textViewVersionNumber);
+        textViewAppVersionNumber.setText("v" + AppUtility.getInstance().getAppVersionNumber(cTxt));
         this.textViewTagId = (TextView)findViewById(R.id.textViewTagId);
         this.textViewTagId.setVisibility(View.GONE);
         this.textViewTimetamp = (TextView)findViewById(R.id.textViewTimestamp);
@@ -224,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                 this.textViewTagId.setText(getResources().getString(R.string.text_tag_id) + ": " + tagID);
 
                 // Check if internet connection is available.
-                if(!AppUtility.getInstance().isInternetConnectionAvailable(5000)){
+                if(!AppUtility.getInstance().isInternetConnectionAvailable()){
                     this.imageViewWarning.setVisibility(View.VISIBLE);
                     this.textViewInfo.setText(getResources().getString(R.string.text_no_internet_connection));
                     return;
@@ -296,13 +294,13 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                 String[] parts = line.trim().split(",");
                 String tagId = parts[0];
                 String timestamp = parts[1];
-                NFCData newData = new NFCData(tagId, null, timestamp, null);
+                NFCData newData = new NFCData(tagId, timestamp);
                 storageData.add(newData);
             }
             br.close();
         }
         catch (IOException e) {
-            Log.e(Constant.LOGGER, e.getLocalizedMessage().toString());
+            Log.e(Constant.LOGGER, e.getLocalizedMessage());
         }
 
         int tappedSum = Constant.INT_INITIAL_NFC_TAP;
@@ -357,12 +355,12 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
             try {
                 fos = new FileOutputStream(file, true);
                 outStreamWriter = new OutputStreamWriter(fos);
-                outStreamWriter.append(data.getTagId() + "," + data.getTimestamp()).append("\n");
+                outStreamWriter.append(data.getTagId()).append(",").append(data.getTimestamp()).append("\n");
                 outStreamWriter.flush();
                 fos.close();
                 return true;
             } catch (Throwable throwable) {
-                Log.e(Constant.LOGGER, throwable.getLocalizedMessage().toString());
+                Log.e(Constant.LOGGER, throwable.getLocalizedMessage());
             }
 
         }
