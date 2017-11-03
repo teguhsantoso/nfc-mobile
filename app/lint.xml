@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="IconLocation">
+        <ignore path="src/main/res/drawable/android_icon.png" />
+        <ignore path="src/main/res/drawable/ic_settings_white_24dp.png" />
+        <ignore path="src/main/res/drawable/nfc_icon.png" />
+        <ignore path="src/main/res/drawable/success_icon.png" />
+        <ignore path="src/main/res/drawable/warning_icon.png" />
+    </issue>
+</lint>
