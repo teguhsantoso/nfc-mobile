@@ -62,7 +62,7 @@ import static de.nfc.reader.util.Constant.REQUEST_EXTERNAL_STORAGE;
 public class MainActivity extends AppCompatActivity implements Response.Listener, Response.ErrorListener {
     private TextView            textViewInfo;
     private TextView            textViewTagId;
-    private TextView            textViewTimetamp;
+    private TextView            textViewTimestamp;
     private ImageView           imageViewWarning;
     private ImageView           imageViewSuccess;
     private ProgressBar         progressBarSendData;
@@ -100,8 +100,8 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
         textViewAppVersionNumber.setText("v" + AppUtility.getInstance().getAppVersionNumber(cTxt));
         this.textViewTagId = findViewById(R.id.textViewTagId);
         this.textViewTagId.setVisibility(View.GONE);
-        this.textViewTimetamp = findViewById(R.id.textViewTimestamp);
-        this.textViewTimetamp.setVisibility(View.GONE);
+        this.textViewTimestamp = findViewById(R.id.textViewTimestamp);
+        this.textViewTimestamp.setVisibility(View.GONE);
         this.imageViewWarning = findViewById(R.id.imageViewWarning);
         this.imageViewWarning.setVisibility(View.GONE);
         this.imageViewSuccess = findViewById(R.id.imageViewSuccess);
@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                 }else{
                     this.imageViewSuccess.setVisibility(View.INVISIBLE);
                     this.imageViewWarning.setVisibility(View.INVISIBLE);
-                    this.textViewTimetamp.setVisibility(View.INVISIBLE);
+                    this.textViewTimestamp.setVisibility(View.INVISIBLE);
                     this.textViewInfo.setText("");
                     this.textViewTagId.setText(getResources().getString(R.string.text_tag_id) + ": " + tagID);
 
@@ -258,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
     @Override
     public void onErrorResponse(VolleyError error) {
         this.imageViewWarning.setVisibility(View.VISIBLE);
-        this.textViewTimetamp.setVisibility(View.INVISIBLE);
+        this.textViewTimestamp.setVisibility(View.INVISIBLE);
         this.textViewInfo.setText(getResources().getString(R.string.text_unknown_card));
     }
 
@@ -275,20 +275,20 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                 switch(Integer.valueOf(mData.getString(Constant.JSON_PARAM_STATUS))){
                     case 0:
                         this.imageViewWarning.setVisibility(View.VISIBLE);
-                        this.textViewTimetamp.setVisibility(View.INVISIBLE);
+                        this.textViewTimestamp.setVisibility(View.INVISIBLE);
                         this.textViewInfo.setText(getResources().getString(R.string.text_unknown_card));
                         break;
                     case 1:
-                        this.textViewTimetamp.setVisibility(View.VISIBLE);
+                        this.textViewTimestamp.setVisibility(View.VISIBLE);
                         final String strName = ((JSONObject) response).getString(Constant.JSON_PARAM_NAME);
                         final String strTimestamp = getCurrentTimestamp();
-                        this.textViewTimetamp.setText(getResources().getString(R.string.text_name) + ": " + strName + "\n" + getResources().getString(R.string.text_timestamp) + ": " + strTimestamp);
+                        this.textViewTimestamp.setText(getResources().getString(R.string.text_name) + ": " + strName + "\n" + getResources().getString(R.string.text_timestamp) + ": " + strTimestamp);
                         this.textViewInfo.setText(getResources().getString(R.string.text_data_sent_to_system));
                         sendDataAbsenceToServer(mData.getString(Constant.JSON_PARAM_TAG_ID), strTimestamp);
                         break;
                     default:
                         this.imageViewWarning.setVisibility(View.VISIBLE);
-                        this.textViewTimetamp.setVisibility(View.INVISIBLE);
+                        this.textViewTimestamp.setVisibility(View.INVISIBLE);
                         this.textViewInfo.setText(getResources().getString(R.string.text_unknown_card));
                 }
             }else if(volleyOperationMode == Constant.VOLLEY_POST_OPERATION){
