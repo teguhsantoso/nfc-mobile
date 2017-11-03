@@ -22,7 +22,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -37,19 +36,12 @@ import com.android.volley.VolleyError;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import de.nfc.reader.R;
-import de.nfc.reader.entities.NFCData;
 import de.nfc.reader.util.AppUtility;
 import de.nfc.reader.util.Constant;
 import de.nfc.reader.util.CustomJsonRequest;
@@ -245,11 +237,6 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
         return Constant.dateFormatter.format(timestamp);
     }
 
-    private String getCurrentDate(){
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        return Constant.dayFormatter.format(timestamp);
-    }
-
     private void closeApp(){
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
@@ -282,40 +269,6 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                     activity, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE
             );
         }
-    }
-
-    private boolean isUserAlreadyTappedTwiceInSameDay(File file, String userId){
-        boolean retVal = false;
-        List<NFCData> storageData = new ArrayList<>();
-
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(file));
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] parts = line.trim().split(",");
-                String tagId = parts[0];
-                String timestamp = parts[1];
-                NFCData newData = new NFCData(tagId, timestamp);
-                storageData.add(newData);
-            }
-            br.close();
-        }
-        catch (IOException e) {
-            Log.e(Constant.LOGGER, e.getLocalizedMessage());
-        }
-
-        int tappedSum = Constant.INT_INITIAL_NFC_TAP;
-        for (NFCData data : storageData) {
-            String strDateData = data.getTimestamp();
-            String[] parts = strDateData.trim().split(" ");
-            String tapDate = parts[0].trim();
-            if(tapDate.equals(getCurrentDate()) && data.getTagId().equals(userId)){
-                tappedSum++;
-            }
-        }
-
-        return tappedSum > Constant.INT_MAX_NFC_TAP;
-
     }
 
     @Override

@@ -4,16 +4,12 @@
     <string name="text_press_once_again">Tekan tombol back button dua kali untuk menutup App ini.</string>
     <string name="text_pass_nfc_card">Silahkan mengetap kartu NFC absensi anda.</string>
     <string name="text_data_nfc_filepath">Semua data NFC disimpan dalam ordner NFC-App/data.txt</string>
-    <string name="text_data_warning_disqualification">Anda telah mengetap dua kali, harap hubungi guru anda!</string>
     <string name="text_nfc_is_not_supported">Fitur NFC tidak didukung dalam smartphone anda.</string>
     <string name="text_nfc_is_not_enabled">Fitur NFC tidak aktiv.</string>
     <string name="text_no_tag_id_found">Tidak ditemukan Tag-ID dalam kartu NFC anda.</string>
     <string name="text_tag_id">Tag-ID</string>
     <string name="text_name">Nama</string>
     <string name="text_timestamp">Timestamp</string>
-    <string name="text_data_file_not_found">File data.txt tidak ditemukan.</string>
-    <string name="text_user_tapped_twice_today">You already tapped twice today.</string>
-    <string name="text_user_presence_recorded">Your presence was recorded successfully.</string>
     <string name="text_no_internet_connection">Tidak terhubung dengan internet.</string>
     <string name="text_unknown_card">Kartu NFC anda tidak dikenal oleh sistem.</string>
     <string name="text_data_sent_to_system">Memanggil servis server…</string>
