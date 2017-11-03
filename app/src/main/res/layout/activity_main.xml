@@ -17,7 +17,8 @@
         app:srcCompat="@drawable/nfc_icon"
         android:layout_marginTop="40dp"
         android:id="@+id/imageView"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:contentDescription="TODO" />
 
     <TextView
         android:text="@string/text_pass_nfc_card"
@@ -71,7 +72,8 @@
         android:visibility="invisible"
         android:id="@+id/imageButton"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:contentDescription="TODO" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -104,7 +106,8 @@
         android:layout_marginTop="32dp"
         android:id="@+id/imageViewWarning"
         android:layout_below="@+id/textViewTimestamp"
-        android:layout_alignStart="@+id/textViewTimestamp" />
+        android:layout_alignStart="@+id/textViewTimestamp"
+        android:contentDescription="TODO" />
 
     <ImageView
         android:layout_width="50dp"
@@ -114,7 +117,8 @@
         android:layout_marginTop="32dp"
         android:id="@+id/imageViewSuccess"
         android:layout_below="@+id/textViewTimestamp"
-        android:layout_alignStart="@+id/textViewTimestamp" />
+        android:layout_alignStart="@+id/textViewTimestamp"
+        android:contentDescription="TODO" />
 
     <TextView
         android:layout_width="wrap_content"

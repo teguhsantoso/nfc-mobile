@@ -228,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                     this.imageViewWarning.setVisibility(View.VISIBLE);
                     this.textViewInfo.setText(getResources().getString(R.string.text_no_internet_connection));
                     return;
-                };
+                }
 
                 // Send request to volley queue based on webservice address.
                 String urlWS = Constant.WEBSERVICE_URL_ADDRESS_GET + tagID;
@@ -259,21 +259,21 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
         finish();
     }
 
-    private void prepareDataAbsenceInStorage(){
-        File root = android.os.Environment.getExternalStorageDirectory();
-        File dir = new File (root.getAbsolutePath() + ROOT_DIR_NAME);
-        if(!dir.exists()){
-            dir.mkdirs();
-        }
-        File file = new File(dir, DATA_FILE_NAME);
-        if (!file.exists()){
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+    //private void prepareDataAbsenceInStorage(){
+    //    File root = android.os.Environment.getExternalStorageDirectory();
+    //    File dir = new File (root.getAbsolutePath() + ROOT_DIR_NAME);
+    //    if(!dir.exists()){
+    //        dir.mkdirs();
+    //    }
+    //    File file = new File(dir, DATA_FILE_NAME);
+    //    if (!file.exists()){
+    //        try {
+    //            file.createNewFile();
+    //        } catch (IOException e) {
+    //            e.printStackTrace();
+    //        }
+    //    }
+    //}
 
     private void verifyStoragePermissions(Activity activity) {
         int writePermission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
@@ -287,7 +287,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
 
     private boolean isUserAlreadyTappedTwiceInSameDay(File file, String userId){
         boolean retVal = false;
-        List<NFCData> storageData = new ArrayList<NFCData>();
+        List<NFCData> storageData = new ArrayList<>();
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
@@ -315,11 +315,8 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
             }
         }
 
-        if(tappedSum > Constant.INT_MAX_NFC_TAP){
-            return true;
-        }
+        return tappedSum > Constant.INT_MAX_NFC_TAP;
 
-        return retVal;
     }
 
     private boolean storeNFCData(NFCData data){
@@ -432,7 +429,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
 
     private void sendDataAbsenceToServer(String strTagId, String strTimestamp) {
         // Prepare the post method parameters for volley.
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put(Constant.JSON_PARAM_TAG_ID, strTagId);
         params.put(Constant.JSON_PARAM_TIMESTAMP, strTimestamp);
 
