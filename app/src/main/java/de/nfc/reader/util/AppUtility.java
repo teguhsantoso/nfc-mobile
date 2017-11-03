@@ -74,8 +74,11 @@ public class AppUtility {
             inetAddress = future.get(5000, TimeUnit.MILLISECONDS);
             future.cancel(true);
         } catch (InterruptedException e) {
+            Log.e(Constant.LOGGER, e.getLocalizedMessage());
         } catch (ExecutionException e) {
+            Log.e(Constant.LOGGER, e.getLocalizedMessage());
         } catch (TimeoutException e) {
+            Log.e(Constant.LOGGER, e.getLocalizedMessage());
         }
         return inetAddress!=null && !inetAddress.equals("");
     }

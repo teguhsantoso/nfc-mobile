@@ -106,18 +106,18 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
         //prepareDataAbsenceInStorage();
 
         // Initialize all UI elements.
-        TextView textViewAppVersionNumber = (TextView) findViewById(R.id.textViewVersionNumber);
+        TextView textViewAppVersionNumber = findViewById(R.id.textViewVersionNumber);
         textViewAppVersionNumber.setText("v" + AppUtility.getInstance().getAppVersionNumber(cTxt));
-        this.textViewTagId = (TextView)findViewById(R.id.textViewTagId);
+        this.textViewTagId = findViewById(R.id.textViewTagId);
         this.textViewTagId.setVisibility(View.GONE);
-        this.textViewTimetamp = (TextView)findViewById(R.id.textViewTimestamp);
+        this.textViewTimetamp = findViewById(R.id.textViewTimestamp);
         this.textViewTimetamp.setVisibility(View.GONE);
-        this.imageViewWarning = (ImageView)findViewById(R.id.imageViewWarning);
+        this.imageViewWarning = findViewById(R.id.imageViewWarning);
         this.imageViewWarning.setVisibility(View.GONE);
-        this.imageViewSuccess = (ImageView)findViewById(R.id.imageViewSuccess);
+        this.imageViewSuccess = findViewById(R.id.imageViewSuccess);
         this.imageViewSuccess.setVisibility(View.GONE);
-        this.textViewInfo = (TextView)findViewById(R.id.textViewReport);
-        this.progressBarSendData = (ProgressBar)findViewById(R.id.progressBarConnecting);
+        this.textViewInfo = findViewById(R.id.textViewReport);
+        this.progressBarSendData = findViewById(R.id.progressBarConnecting);
         this.progressBarSendData.setVisibility(View.INVISIBLE);
 
         // Initialize the NFC adapter for reading the tag UID.

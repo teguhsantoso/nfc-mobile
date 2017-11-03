@@ -35,7 +35,7 @@ public class SplashActivity extends AppCompatActivity {
         this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         // Initialize all UI components.
-        imageViewSplashIcon = (ImageView) findViewById(R.id.imageViewIcon);
+        imageViewSplashIcon = findViewById(R.id.imageViewIcon);
 
         // Set default action and values for UI components.
         showAnimation = true;
