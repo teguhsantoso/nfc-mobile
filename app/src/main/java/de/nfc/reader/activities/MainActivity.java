@@ -282,7 +282,8 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
                         this.textViewTimestamp.setVisibility(View.VISIBLE);
                         final String strName = ((JSONObject) response).getString(Constant.JSON_PARAM_NAME);
                         final String strTimestamp = getCurrentTimestamp();
-                        this.textViewTimestamp.setText(getResources().getString(R.string.text_name) + ": " + strName + "\n" + getResources().getString(R.string.text_timestamp) + ": " + strTimestamp);
+                        //this.textViewTimestamp.setText(getResources().getString(R.string.text_name) + ": " + strName + "\n" + getResources().getString(R.string.text_timestamp) + ": " + strTimestamp);
+                        this.textViewTimestamp.setText(getResources().getString(R.string.text_name, strName, strTimestamp));
                         this.textViewInfo.setText(getResources().getString(R.string.text_data_sent_to_system));
                         sendDataAbsenceToServer(mData.getString(Constant.JSON_PARAM_TAG_ID), strTimestamp);
                         break;

@@ -8,8 +8,7 @@
     <string name="text_nfc_is_not_enabled">Fitur NFC tidak aktiv.</string>
     <string name="text_no_tag_id_found">Tidak ditemukan Tag-ID dalam kartu NFC anda.</string>
     <string name="text_tag_id">Tag-ID: %1$s</string>
-    <string name="text_name">Nama</string>
-    <string name="text_timestamp">Timestamp</string>
+    <string name="text_name">Nama: %1$s \n Timestamp: %2$s</string>
     <string name="text_no_internet_connection">Tidak terhubung dengan internet.</string>
     <string name="text_unknown_card">Kartu NFC anda tidak dikenal oleh sistem.</string>
     <string name="text_data_sent_to_system">Memanggil servis server…</string>
