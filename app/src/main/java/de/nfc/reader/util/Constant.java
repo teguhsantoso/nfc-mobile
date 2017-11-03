@@ -24,11 +24,7 @@ public class Constant {
     public static final int                 INT_MAX_NFC_TAP = 2;
     public static final int                 VOLLEY_GET_OPERATION = 0;
     public static final int                 VOLLEY_POST_OPERATION = 1;
-    public static final int                 PARAM_TIMER_DURATION_MILLIS = 1000;
-    public static final int                 PARAM_TIMER_INTERVAL_MILLIS = 500;
-    public static final String[]                  PERMISSIONS_STORAGE = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
-    public static final String              ROOT_DIR_NAME = "/NFC-App";
-    public static final String              DATA_FILE_NAME = "data.txt";
+    public static final String[]             PERMISSIONS_STORAGE = {Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE};
     public static final String              REQUEST_TAG = "MainVolleyActivity";
     public static final String              WEBSERVICE_URL_ADDRESS_GET = "http://api.jeni-us.xyz/api/absen/cek-status/";
     public static final String              WEBSERVICE_URL_ADDRESS_POST = "http://api.jeni-us.xyz/api/absen/push";

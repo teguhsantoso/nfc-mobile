@@ -18,6 +18,7 @@ import android.nfc.tech.NfcA;
 import android.nfc.tech.NfcB;
 import android.nfc.tech.NfcF;
 import android.nfc.tech.NfcV;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -38,15 +39,14 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import de.nfc.reader.R;
 import de.nfc.reader.entities.NFCData;
@@ -57,10 +57,8 @@ import de.nfc.reader.util.CustomVolleyRequestQueue;
 
 import static de.nfc.reader.util.Constant.BEEP_START_TIME;
 import static de.nfc.reader.util.Constant.BEEP_VOLUME_LEVEL;
-import static de.nfc.reader.util.Constant.DATA_FILE_NAME;
 import static de.nfc.reader.util.Constant.PERMISSIONS_STORAGE;
 import static de.nfc.reader.util.Constant.REQUEST_EXTERNAL_STORAGE;
-import static de.nfc.reader.util.Constant.ROOT_DIR_NAME;
 
 /**
  *
@@ -201,40 +199,43 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
 
     @Override
     protected void onNewIntent(Intent intent) {
-        if (intent.getAction().equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (Objects.equals(intent.getAction(), NfcAdapter.ACTION_TAG_DISCOVERED)) {
 
-            // Set beep sound if new tag discovered.
-            ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, BEEP_VOLUME_LEVEL);
-            toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, BEEP_START_TIME);
+                // Set beep sound if new tag discovered.
+                ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, BEEP_VOLUME_LEVEL);
+                toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, BEEP_START_TIME);
 
-            // Retrieve the tag UID from intent, it contains 7 bytes.
-            String tagID = AppUtility.getInstance().convertByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
+                // Retrieve the tag UID from intent, it contains 7 bytes.
+                String tagID = AppUtility.getInstance().convertByteArrayToHexString(intent.getByteArrayExtra(NfcAdapter.EXTRA_ID));
 
-            // Refresh the UI elements contents and states.
-            this.textViewTagId.setVisibility(View.VISIBLE);
-            if(tagID == null){
-                this.textViewTagId.setText(getResources().getString(R.string.text_no_tag_id_found));
-            }else{
-                this.imageViewSuccess.setVisibility(View.INVISIBLE);
-                this.imageViewWarning.setVisibility(View.INVISIBLE);
-                this.textViewTimetamp.setVisibility(View.INVISIBLE);
-                this.textViewInfo.setText("");
-                this.textViewTagId.setText(getResources().getString(R.string.text_tag_id) + ": " + tagID);
+                // Refresh the UI elements contents and states.
+                this.textViewTagId.setVisibility(View.VISIBLE);
+                if(tagID == null){
+                    this.textViewTagId.setText(getResources().getString(R.string.text_no_tag_id_found));
+                }else{
+                    this.imageViewSuccess.setVisibility(View.INVISIBLE);
+                    this.imageViewWarning.setVisibility(View.INVISIBLE);
+                    this.textViewTimetamp.setVisibility(View.INVISIBLE);
+                    this.textViewInfo.setText("");
+                    this.textViewTagId.setText(getResources().getString(R.string.text_tag_id) + ": " + tagID);
 
-                // Check if internet connection is available.
-                if(!AppUtility.getInstance().isInternetConnectionAvailable()){
-                    this.imageViewWarning.setVisibility(View.VISIBLE);
-                    this.textViewInfo.setText(getResources().getString(R.string.text_no_internet_connection));
-                    return;
+                    // Check if internet connection is available.
+                    if(!AppUtility.getInstance().isInternetConnectionAvailable()){
+                        this.imageViewWarning.setVisibility(View.VISIBLE);
+                        this.textViewInfo.setText(getResources().getString(R.string.text_no_internet_connection));
+                        return;
+                    }
+
+                    // Send request to volley queue based on webservice address.
+                    String urlWS = Constant.WEBSERVICE_URL_ADDRESS_GET + tagID;
+                    //noinspection unchecked
+                    final CustomJsonRequest jsonRequest = new CustomJsonRequest(Request.Method.GET, urlWS, new JSONObject(), this, this);
+                    jsonRequest.setTag(Constant.REQUEST_TAG);
+                    volleyOperationMode = Constant.VOLLEY_GET_OPERATION;
+                    mQueue.add(jsonRequest);
+
                 }
-
-                // Send request to volley queue based on webservice address.
-                String urlWS = Constant.WEBSERVICE_URL_ADDRESS_GET + tagID;
-                final CustomJsonRequest jsonRequest = new CustomJsonRequest(Request.Method.GET, urlWS, new JSONObject(), this, this);
-                jsonRequest.setTag(Constant.REQUEST_TAG);
-                volleyOperationMode = Constant.VOLLEY_GET_OPERATION;
-                mQueue.add(jsonRequest);
-
             }
         }
     }
@@ -317,57 +318,6 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
 
     }
 
-    private boolean storeNFCData(NFCData data){
-        File root = android.os.Environment.getExternalStorageDirectory();
-
-        File dir = new File (root.getAbsolutePath() + ROOT_DIR_NAME);
-        if(!dir.exists()){
-            dir.mkdirs();
-        }
-
-        File file = new File(dir, DATA_FILE_NAME);
-        if (!file.exists()){
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if(!file.exists()){
-            Toast.makeText(getBaseContext(), getResources().getString(R.string.text_data_file_not_found), Toast.LENGTH_SHORT).show();
-            return false;
-        }else{
-            if(isUserAlreadyTappedTwiceInSameDay(file, data.getTagId())){
-                this.imageViewWarning.setVisibility(View.VISIBLE);
-                this.imageViewSuccess.setVisibility(View.INVISIBLE);
-                this.textViewInfo.setVisibility(View.VISIBLE);
-                this.textViewInfo.setText(getResources().getString(R.string.text_user_tapped_twice_today));
-            }else{
-                this.imageViewWarning.setVisibility(View.INVISIBLE);
-                this.imageViewSuccess.setVisibility(View.VISIBLE);
-                this.textViewInfo.setVisibility(View.VISIBLE);
-                this.textViewInfo.setText(getResources().getString(R.string.text_user_presence_recorded));
-            }
-
-            FileOutputStream fos = null;
-            OutputStreamWriter outStreamWriter = null;
-            try {
-                fos = new FileOutputStream(file, true);
-                outStreamWriter = new OutputStreamWriter(fos);
-                outStreamWriter.append(data.getTagId()).append(",").append(data.getTimestamp()).append("\n");
-                outStreamWriter.flush();
-                fos.close();
-                return true;
-            } catch (Throwable throwable) {
-                Log.e(Constant.LOGGER, throwable.getLocalizedMessage());
-            }
-
-        }
-
-        return false;
-    }
-
     @Override
     public void onErrorResponse(VolleyError error) {
         this.imageViewWarning.setVisibility(View.VISIBLE);
@@ -432,6 +382,7 @@ public class MainActivity extends AppCompatActivity implements Response.Listener
         params.put(Constant.JSON_PARAM_TIMESTAMP, strTimestamp);
 
         // Send post request using volley queue.
+        // noinspection unchecked
         final CustomJsonRequest jsonRequest = new CustomJsonRequest(Request.Method.POST, Constant.WEBSERVICE_URL_ADDRESS_POST, new JSONObject(params), this, this);
         jsonRequest.setTag(Constant.REQUEST_TAG);
         volleyOperationMode = Constant.VOLLEY_POST_OPERATION;
